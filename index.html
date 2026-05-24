@@ -39,7 +39,22 @@
   .contact{font-size:14px; margin-top:8px; padding-top:8px; border-top:1px dashed var(--line);}
   .contact b{color:var(--ink);}
 
-  .month{margin:18px 0;}
+  .monthnav{
+    position:sticky; top:0; z-index:20;
+    display:flex; gap:8px; justify-content:center; flex-wrap:wrap;
+    padding:10px 6px 8px; margin:0 -12px 6px;
+    background:rgba(237,232,225,.92);
+    backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+  }
+  .mbtn{
+    border:1px solid var(--line); background:var(--card); color:var(--ink);
+    font:inherit; font-size:14px; font-weight:600; padding:7px 16px; border-radius:999px;
+    cursor:pointer; transition:filter .15s, transform .08s, background .15s, color .15s;
+  }
+  .mbtn:active{transform:scale(.95);}
+  .mbtn.active{background:var(--sage); color:#fff; border-color:var(--sage);}
+
+  .month{margin:18px 0; scroll-margin-top:64px;}
   .month h2{font-size:16px; margin:0 0 8px; padding-left:4px;}
   .grid{display:grid; grid-template-columns:repeat(7,1fr); gap:5px;}
   .dow{text-align:center; font-size:12px; color:var(--muted); padding:4px 0; font-weight:600;}
@@ -100,6 +115,8 @@
     <h1>陳由晏醫師 ｜ 美顏針 ｜ 可預約時間</h1>
     <p class="sub">施作 + 留針約 <b>1 小時</b>　·　請參考下方月曆挑選空檔</p>
   </header>
+
+  <nav id="monthNav" class="monthnav" aria-label="月份快速跳轉"></nav>
 
   <div class="panel">
     <div class="legend">
@@ -192,7 +209,7 @@ function buildMonth(monthStr){
   const today = new Date(); today.setHours(0,0,0,0);
   const todayIso = ymd(today);
 
-  let html = '<div class="month"><h2>'+y+' 年 '+m+' 月</h2><div class="grid">';
+  let html = '<div class="month" id="m-'+monthStr+'"><h2>'+y+' 年 '+m+' 月</h2><div class="grid">';
   WD_NAMES.forEach((n,i)=>{
     const cls = i===0?'sun':(i===6?'sat':'');
     html += '<div class="dow '+cls+'">'+n+'</div>';
@@ -244,6 +261,35 @@ function buildMonth(monthStr){
 }
 
 document.getElementById('calendar').innerHTML = CONFIG.months.map(buildMonth).join('');
+
+/* ---- 月份快速跳轉 ---- */
+(function(){
+  const nav = document.getElementById('monthNav');
+  CONFIG.months.forEach(ms=>{
+    const m = Number(ms.split('-')[1]);
+    const b = document.createElement('button');
+    b.className = 'mbtn';
+    b.textContent = m + ' 月';
+    b.dataset.target = 'm-' + ms;
+    b.addEventListener('click', ()=>{
+      const el = document.getElementById('m-' + ms);
+      if(el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+    });
+    nav.appendChild(b);
+  });
+  const btns = Array.from(nav.children);
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(en=>{
+      if(en.isIntersecting){
+        btns.forEach(b=>b.classList.toggle('active', b.dataset.target===en.target.id));
+      }
+    });
+  }, { rootMargin:'-50% 0px -50% 0px', threshold:0 });
+  CONFIG.months.forEach(ms=>{
+    const s = document.getElementById('m-' + ms);
+    if(s) io.observe(s);
+  });
+})();
 
 /* ---- 點擊複製 ---- */
 let toastTimer;
