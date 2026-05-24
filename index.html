@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>美顏針 ｜ 可預約時間</title>
+<title>陳由晏醫師 ｜ 美顏針 ｜ 可預約時間</title>
 <style>
   :root{
     --bg:#EDE8E1; --card:#FBF9F6; --ink:#4A4540; --muted:#9A938B;
@@ -97,8 +97,8 @@
 <body>
 <div class="wrap">
   <header>
-    <h1>美顏針 ｜ 可預約時間</h1>
-    <p class="sub">施作＋留針約 <b>1 小時</b>　·　請參考下方月曆挑選空檔</p>
+    <h1>陳由晏醫師 ｜ 美顏針 ｜ 可預約時間</h1>
+    <p class="sub">施作 + 留針約 <b>1 小時</b>　·　請參考下方月曆挑選空檔</p>
   </header>
 
   <div class="panel">
@@ -108,7 +108,7 @@
       <span class="key"><span class="swatch g"></span>龜山</span>
       <span class="key"><span class="swatch c"></span>林口</span>
     </div>
-    <p class="note">點選藍色（可預約）時段，會自動複製預約訊息，再貼到官方 LINE 傳送即可。週五早上時間彈性（09:00–12:00 內皆可）；週六早上 09:00 採排班，僅標示日期開放。</p>
+    <p class="note">點選藍色（可預約）時段，會自動複製預約訊息，再貼到官方 LINE 傳送即可。週五早上時間彈性 (09:00 - 12:00 內皆可)；週六早上 09:00 採排班，僅標示日期開放。</p>
     <p class="contact"><b>預約方式：</b>請私訊本院<b>官方 LINE</b>，把複製好的訊息貼上傳送即可完成預約。</p>
   </div>
 
@@ -131,7 +131,7 @@ const CONFIG = {
   saturdayMorningDates: ['2026-05-30', '2026-06-13', '2026-06-20'],
 
   // ★ 休診／請假（整天不開診）：YYYY-MM-DD
-  daysOff: ['2026-07-04', '2026-07-26', '2026-07-27', '2026-07-28', '2026-07-29'],
+  daysOff: ['2026-07-04', '2026-07-25', '2026-07-26', '2026-07-27', '2026-07-28', '2026-07-29'],
 
   // ★ 每週日早上 11:00 固定一位（長期已約）
   sundayMorningFixed: true,
@@ -165,7 +165,7 @@ function clinicForDate(d){
 
   if(wd===1){ loc='龜山'; slots=[{key:'13:55',label:'13:55',copy:'13:55'}]; }            // 一
   else if(wd===4){ loc='龜山'; slots=[{key:'17:15',label:'17:15',copy:'17:15'}]; }       // 四
-  else if(wd===5){ loc = after?'林口':'龜山'; slots=[{key:'09:00',label:'早上',copy:'早上（09:00–12:00）'}]; } // 五
+  else if(wd===5){ loc = after?'林口':'龜山'; slots=[{key:'09:00',label:'早上',copy:'早上 (09:00 - 12:00)'}]; } // 五
   else if(wd===0){ loc='林口'; slots=[{key:'11:00',label:'11:00',copy:'11:00'},{key:'13:55',label:'13:55',copy:'13:55'}]; } // 日
   else if(wd===6){                                                                       // 六
     loc='龜山';
@@ -227,7 +227,7 @@ function buildMonth(monthStr){
         if(booked){
           inner += '<span class="chip busy">'+s.label+'</span>';
         } else {
-          const msg = '想預約 '+m+'/'+day+'（'+WD_NAMES[wd]+'）'+s.copy;
+          const msg = '想預約 '+m+'/'+day+' ('+WD_NAMES[wd]+') '+s.copy;
           inner += '<span class="chip free" data-msg="'+msg+'">'+s.label+'</span>';
         }
       });
@@ -256,7 +256,7 @@ function showToast(msg){
 }
 function copyText(t){
   if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(t).then(()=>showToast('已複製：'+t+'（貼到官方 LINE 傳送）'), ()=>fallbackCopy(t));
+    navigator.clipboard.writeText(t).then(()=>showToast('已複製：'+t+' (貼到官方 LINE 傳送)'), ()=>fallbackCopy(t));
   } else { fallbackCopy(t); }
 }
 function fallbackCopy(t){
@@ -266,7 +266,7 @@ function fallbackCopy(t){
   let ok=false;
   try{ ok = document.execCommand('copy'); }catch(e){}
   document.body.removeChild(ta);
-  showToast(ok ? ('已複製：'+t+'（貼到官方 LINE 傳送）') : ('請手動傳送：'+t));
+  showToast(ok ? ('已複製：'+t+' (貼到官方 LINE 傳送)') : ('請手動傳送：'+t));
 }
 document.getElementById('calendar').addEventListener('click', function(e){
   const chip = e.target.closest('.chip.free');
