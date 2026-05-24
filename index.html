@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>美顏針 ｜ 可預約時間</title>
+<style>
+  :root{
+    --bg:#EDE8E1; --card:#FBF9F6; --ink:#4A4540; --muted:#9A938B;
+    --purple:#A292A8;   /* 莫蘭迪紫＝已約 */
+    --blue:#8FA9B4;     /* 莫蘭迪藍＝可約 */
+    --sage:#9AAB97;     /* 龜山 */
+    --clay:#C2A29A;     /* 林口 */
+    --line:#E3DCD2;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    line-height:1.5; padding:18px 12px 60px;
+  }
+  .wrap{max-width:760px; margin:0 auto;}
+  header{text-align:center; margin-bottom:14px;}
+  h1{font-size:22px; margin:0 0 4px; letter-spacing:1px;}
+  .sub{color:var(--muted); font-size:13px; margin:0;}
+
+  .panel{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:12px 14px; margin:12px 0;
+  }
+  .legend{display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; font-size:13px;}
+  .key{display:inline-flex; align-items:center; gap:6px;}
+  .swatch{width:16px; height:16px; border-radius:5px; display:inline-block;}
+  .swatch.p{background:var(--purple);}
+  .swatch.b{background:var(--blue);}
+  .swatch.g{background:var(--sage);}
+  .swatch.c{background:var(--clay);}
+  .note{font-size:13px; color:var(--muted); margin-top:8px;}
+  .contact{font-size:14px; margin-top:8px; padding-top:8px; border-top:1px dashed var(--line);}
+  .contact b{color:var(--ink);}
+
+  .month{margin:18px 0;}
+  .month h2{font-size:16px; margin:0 0 8px; padding-left:4px;}
+  .grid{display:grid; grid-template-columns:repeat(7,1fr); gap:5px;}
+  .dow{text-align:center; font-size:12px; color:var(--muted); padding:4px 0; font-weight:600;}
+  .dow.sun,.dow.sat{color:#B58F86;}
+  .cell{
+    background:var(--card); border:1px solid var(--line); border-radius:10px;
+    min-height:64px; padding:4px 4px 5px; position:relative; overflow:hidden;
+  }
+  .cell.empty{background:transparent; border-color:transparent; min-height:0;}
+  .cell.blank{background:#F4F0EA; border-style:dashed; opacity:.65;}
+  .cell.off{background:#F0EBE4; border-style:dashed;}
+  .cell.past{opacity:.38;}
+  .cell.today{outline:2px solid var(--sage); outline-offset:-2px;}
+  .daynum{font-size:12px; font-weight:700; color:var(--ink);}
+  .loc{
+    float:right; font-size:10px; color:#fff; border-radius:5px;
+    padding:0 5px; line-height:16px; font-weight:700;
+  }
+  .loc.gs{background:var(--sage);}
+  .loc.lk{background:var(--clay);}
+  .offtag{
+    margin-top:8px; text-align:center; font-size:11px; color:var(--muted);
+    font-weight:700; letter-spacing:2px;
+  }
+  .chips{display:flex; flex-direction:column; gap:3px; margin-top:4px;}
+  .chip{
+    font-size:11px; color:#fff; border-radius:6px; padding:2px 5px;
+    text-align:center; white-space:nowrap; font-weight:600; letter-spacing:.3px;
+  }
+  .chip.free{background:var(--blue); cursor:pointer; transition:transform .08s, filter .08s;}
+  .chip.free:hover{filter:brightness(1.06);}
+  .chip.free:active{transform:scale(.94);}
+  .chip.busy{background:var(--purple); text-decoration:line-through; text-decoration-thickness:1px; opacity:.92;}
+
+  #toast{
+    position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(12px);
+    background:#4A4540; color:#fff; font-size:13px; padding:10px 16px; border-radius:10px;
+    max-width:90%; text-align:center; box-shadow:0 6px 18px rgba(0,0,0,.2);
+    opacity:0; pointer-events:none; transition:opacity .2s, transform .2s; z-index:50;
+  }
+  #toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  footer{text-align:center; color:var(--muted); font-size:12px; margin-top:26px;}
+
+  @media (max-width:560px){
+    h1{font-size:19px;}
+    .cell{min-height:58px; padding:3px;}
+    .chip{font-size:10px; padding:2px 3px;}
+    .daynum{font-size:11px;}
+    .loc{font-size:9px; padding:0 4px;}
+    .grid{gap:4px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>美顏針 ｜ 可預約時間</h1>
+    <p class="sub">施作＋留針約 <b>1 小時</b>　·　請參考下方月曆挑選空檔</p>
+  </header>
+
+  <div class="panel">
+    <div class="legend">
+      <span class="key"><span class="swatch b"></span>可預約</span>
+      <span class="key"><span class="swatch p"></span>已約滿</span>
+      <span class="key"><span class="swatch g"></span>龜山</span>
+      <span class="key"><span class="swatch c"></span>林口</span>
+    </div>
+    <p class="note">點選藍色（可預約）時段，會自動複製預約訊息，再貼到官方 LINE 傳送即可。週五早上時間彈性（09:00–12:00 內皆可）；週六早上 09:00 採排班，僅標示日期開放。</p>
+    <p class="contact"><b>預約方式：</b>請私訊本院<b>官方 LINE</b>，把複製好的訊息貼上傳送即可完成預約。</p>
+  </div>
+
+  <div id="calendar"></div>
+
+  <footer>畫面僅供查看當前空檔，實際預約以官方 LINE 確認為準。</footer>
+</div>
+<div id="toast"></div>
+
+<script>
+/* ===================== 可編輯設定區 ===================== */
+const CONFIG = {
+  // 制度轉換日：此日(含)起，週五改林口、週六新增下午+晚上
+  regimeChangeDate: '2026-07-01',
+
+  // 顯示的月份
+  months: ['2026-05','2026-06','2026-07'],
+
+  // ★ 週六早上 09:00 排班日（每月初更新「下個月」開哪幾個週六早上）
+  saturdayMorningDates: ['2026-05-30', '2026-06-13', '2026-06-20'],
+
+  // ★ 休診／請假（整天不開診）：YYYY-MM-DD
+  daysOff: ['2026-07-04', '2026-07-26', '2026-07-27', '2026-07-28', '2026-07-29'],
+
+  // ★ 每週日早上 11:00 固定一位（長期已約）
+  sundayMorningFixed: true,
+
+  // ★ 已預約時段：date=YYYY-MM-DD，slot=該日時段代碼，note 可留空
+  //   時段代碼：'09:00'(週五早上/週六早上) '13:55'(下午) '17:15'(晚上)
+  //            '11:00'(週日早上) '13:55'(週日下午)
+  bookings: [
+    { date:'2026-05-30', slot:'09:00', note:'母女綁定 2 位' },
+    { date:'2026-05-31', slot:'13:55' },
+    { date:'2026-06-14', slot:'13:55' },
+    { date:'2026-06-20', slot:'09:00' },
+    { date:'2026-06-25', slot:'17:15' },
+    { date:'2026-07-02', slot:'17:15' },
+  ],
+};
+/* =================== 設定區結束（以下免改） =================== */
+
+const WD_NAMES = ['日','一','二','三','四','五','六'];
+
+function ymd(d){
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+// 回傳某日門診：{loc, slots:[{key,label,copy}]} 或 null（無診），不含休假判斷
+function clinicForDate(d){
+  const wd = d.getDay();           // 0=日 .. 6=六
+  const iso = ymd(d);
+  const after = iso >= CONFIG.regimeChangeDate;
+  let loc=null, slots=[];
+
+  if(wd===1){ loc='龜山'; slots=[{key:'13:55',label:'13:55',copy:'13:55'}]; }            // 一
+  else if(wd===4){ loc='龜山'; slots=[{key:'17:15',label:'17:15',copy:'17:15'}]; }       // 四
+  else if(wd===5){ loc = after?'林口':'龜山'; slots=[{key:'09:00',label:'早上',copy:'早上（09:00–12:00）'}]; } // 五
+  else if(wd===0){ loc='林口'; slots=[{key:'11:00',label:'11:00',copy:'11:00'},{key:'13:55',label:'13:55',copy:'13:55'}]; } // 日
+  else if(wd===6){                                                                       // 六
+    loc='龜山';
+    if(CONFIG.saturdayMorningDates.includes(iso)) slots.push({key:'09:00',label:'09:00',copy:'09:00'});
+    if(after){ slots.push({key:'13:55',label:'13:55',copy:'13:55'}); slots.push({key:'17:15',label:'17:15',copy:'17:15'}); }
+    if(slots.length===0) return null;
+  } else {
+    return null;
+  }
+  return {loc, slots};
+}
+
+function isBooked(iso, key, wd){
+  if(wd===0 && key==='11:00' && CONFIG.sundayMorningFixed) return true;
+  return CONFIG.bookings.some(b=>b.date===iso && b.slot===key);
+}
+
+function buildMonth(monthStr){
+  const [y,m] = monthStr.split('-').map(Number);
+  const first = new Date(y, m-1, 1);
+  const daysInMonth = new Date(y, m, 0).getDate();
+  const startWd = first.getDay();
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  const todayIso = ymd(today);
+
+  let html = '<div class="month"><h2>'+y+' 年 '+m+' 月</h2><div class="grid">';
+  WD_NAMES.forEach((n,i)=>{
+    const cls = i===0?'sun':(i===6?'sat':'');
+    html += '<div class="dow '+cls+'">'+n+'</div>';
+  });
+
+  for(let i=0;i<startWd;i++) html += '<div class="cell empty"></div>';
+
+  for(let day=1; day<=daysInMonth; day++){
+    const d = new Date(y, m-1, day);
+    const iso = ymd(d);
+    const wd = d.getDay();
+    const raw = clinicForDate(d);
+    const off = CONFIG.daysOff.includes(iso);
+    const isPast = iso < todayIso;
+    const isToday = iso === todayIso;
+
+    let cls = 'cell';
+    if(isPast) cls += ' past';
+    if(isToday) cls += ' today';
+
+    let inner = '';
+
+    if(off && raw){                       // 原本有診、但休假 → 休診
+      cls += ' off';
+      inner += '<span class="daynum">'+day+'</span><div class="offtag">休診</div>';
+    } else if(raw){                       // 正常門診日
+      const locCls = raw.loc==='龜山' ? 'gs' : 'lk';
+      inner += '<span class="loc '+locCls+'">'+raw.loc+'</span>';
+      inner += '<span class="daynum">'+day+'</span><div class="chips">';
+      raw.slots.forEach(s=>{
+        const booked = isBooked(iso, s.key, wd);
+        if(booked){
+          inner += '<span class="chip busy">'+s.label+'</span>';
+        } else {
+          const msg = '想預約 '+m+'/'+day+'（'+WD_NAMES[wd]+'）'+s.copy;
+          inner += '<span class="chip free" data-msg="'+msg+'">'+s.label+'</span>';
+        }
+      });
+      inner += '</div>';
+    } else {                              // 無門診
+      cls += ' blank';
+      inner += '<span class="daynum">'+day+'</span>';
+    }
+    html += '<div class="'+cls+'">'+inner+'</div>';
+  }
+
+  html += '</div></div>';
+  return html;
+}
+
+document.getElementById('calendar').innerHTML = CONFIG.months.map(buildMonth).join('');
+
+/* ---- 點擊複製 ---- */
+let toastTimer;
+function showToast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>el.classList.remove('show'), 2600);
+}
+function copyText(t){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(()=>showToast('已複製：'+t+'（貼到官方 LINE 傳送）'), ()=>fallbackCopy(t));
+  } else { fallbackCopy(t); }
+}
+function fallbackCopy(t){
+  const ta = document.createElement('textarea');
+  ta.value = t; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.focus(); ta.select();
+  let ok=false;
+  try{ ok = document.execCommand('copy'); }catch(e){}
+  document.body.removeChild(ta);
+  showToast(ok ? ('已複製：'+t+'（貼到官方 LINE 傳送）') : ('請手動傳送：'+t));
+}
+document.getElementById('calendar').addEventListener('click', function(e){
+  const chip = e.target.closest('.chip.free');
+  if(!chip) return;
+  copyText(chip.getAttribute('data-msg'));
+});
+</script>
+</body>
+</html>
