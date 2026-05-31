@@ -2,6 +2,8 @@
 admin.html
 # 本機姓名資料（病人個資）— 絕不上傳 GitHub
 names.local.js
+# 本機歷史名單（病人個資）— 絕不上傳 GitHub
+history.local.js
 # 本機開啟捷徑
 開啟後台.command
 *.command
