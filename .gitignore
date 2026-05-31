@@ -1,0 +1,5 @@
+# 本機後台（含病人姓名邏輯）— 絕不上傳 GitHub
+admin.html
+# 後台姓名備份檔
+face-admin-names-backup.json
+*.backup.json
