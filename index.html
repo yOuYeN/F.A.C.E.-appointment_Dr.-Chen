@@ -175,7 +175,7 @@ function clinicForDate(d){
 }
 
 function isBooked(iso, key, wd){
-  if(wd===0 && key==='11:00' && CONFIG.sundayMorningFixed) return true;
+  if(wd===0 && key==='11:00' && CONFIG.sundayMorningFixed && !(CONFIG.sundayMorningSkip||[]).includes(iso)) return true;
   return CONFIG.bookings.some(b=>b.date===iso && b.slot===key);
 }
 
