@@ -138,8 +138,10 @@
 <script>
 /* ===================== 可編輯設定區 ===================== */
 const CONFIG = {
-  // 制度轉換日：此日(含)起，週五改林口、週六新增下午+晚上
-  regimeChangeDate: '2026-07-01',
+  // 週五看診地點轉換日：此日(含)起，週五早診改「林口」（之前為龜山）
+  fridayToLinkouDate: '2026-08-01',
+  // 週六加診轉換日：此日(含)起，週六新增下午(13:55)+晚上(17:15)
+  saturdayExtraDate: '2026-07-01',
 
   // 顯示的月份
   months: ['2026-05','2026-06','2026-07'],
@@ -159,10 +161,16 @@ const CONFIG = {
   bookings: [
     { date:'2026-05-30', slot:'09:00', note:'母女綁定 2 位' },
     { date:'2026-05-31', slot:'13:55' },
+    { date:'2026-06-04', slot:'17:15' },
     { date:'2026-06-14', slot:'13:55' },
-    { date:'2026-06-20', slot:'09:00' },
     { date:'2026-06-25', slot:'17:15' },
+    { date:'2026-06-28', slot:'09:00', note:'母女綁定 2 位' },
     { date:'2026-07-02', slot:'17:15' },
+  ],
+
+  // ★ 特例加開時段（排班表沒有、單獨某日加開一格）：date, slot(時段代碼), label(格內顯示), copy(LINE 訊息用)
+  extraSlots: [
+    { date:'2026-06-28', slot:'09:00', label:'09:00', copy:'早上 09:00' },
   ],
 };
 /* =================== 設定區結束（以下免改） =================== */
@@ -177,20 +185,27 @@ function ymd(d){
 function clinicForDate(d){
   const wd = d.getDay();           // 0=日 .. 6=六
   const iso = ymd(d);
-  const after = iso >= CONFIG.regimeChangeDate;
+  const friAfter = iso >= CONFIG.fridayToLinkouDate;   // 週五是否已轉林口
+  const satAfter = iso >= CONFIG.saturdayExtraDate;     // 週六是否已加下午+晚上
   let loc=null, slots=[];
 
   if(wd===1){ loc='龜山'; slots=[{key:'13:55',label:'13:55',copy:'13:55'}]; }            // 一
   else if(wd===4){ loc='龜山'; slots=[{key:'17:15',label:'17:15',copy:'17:15'}]; }       // 四
-  else if(wd===5){ loc = after?'林口':'龜山'; slots=[{key:'09:00',label:'早上',copy:'早上 (09:00 - 12:00)'}]; } // 五
+  else if(wd===5){ loc = friAfter?'林口':'龜山'; slots=[{key:'09:00',label:'早上',copy:'早上 (09:00 - 12:00)'}]; } // 五
   else if(wd===0){ loc='林口'; slots=[{key:'11:00',label:'11:00',copy:'11:00'},{key:'13:55',label:'13:55',copy:'13:55'}]; } // 日
   else if(wd===6){                                                                       // 六
     loc='龜山';
     if(CONFIG.saturdayMorningDates.includes(iso)) slots.push({key:'09:00',label:'09:00',copy:'09:00'});
-    if(after){ slots.push({key:'13:55',label:'13:55',copy:'13:55'}); slots.push({key:'17:15',label:'17:15',copy:'17:15'}); }
+    if(satAfter){ slots.push({key:'13:55',label:'13:55',copy:'13:55'}); slots.push({key:'17:15',label:'17:15',copy:'17:15'}); }
     if(slots.length===0) return null;
   } else {
     return null;
+  }
+  // 特例加開時段：併入當日並依時間排序
+  const extras = CONFIG.extraSlots ? CONFIG.extraSlots.filter(e=>e.date===iso) : [];
+  if(extras.length){
+    extras.forEach(e=> slots.push({key:e.slot,label:e.label,copy:e.copy}));
+    slots.sort((a,b)=> a.key<b.key ? -1 : (a.key>b.key?1:0));
   }
   return {loc, slots};
 }
