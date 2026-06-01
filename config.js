@@ -23,8 +23,12 @@ const CONFIG = {
   // ★ 每週日早上 11:00 固定一位（長期已約；姓名存本機 names.local.js，不上網）
   sundayMorningFixed: true,
   sundayMorningWho: 'XMR',   // 該患者的個人連結代碼（非姓名）
+  sundayMorningFixedEndDate: '2026-07-31',  // 此日(含)後週日 11:00 不再固定（改為可約或依需求另訂）
   // 該固定病人「沒來」的週日 → 當天 11:00 改為開放可約（事後刪除用）：YYYY-MM-DD
   sundayMorningSkip: ['2026-05-10', '2026-05-24'],
+
+  // ★ 週六早上「待定」月份（顯示灰底不開放，等月初公告後再補入 saturdayMorningDates）
+  saturdayMorningPendingMonths: ['2026-08'],
 
   // ★ 已預約時段：date=YYYY-MM-DD，slot=該日時段代碼，note 可留空（note 為公開、勿寫真實姓名）
   //   時段代碼：'09:00'(週五早上/週六早上) '13:55'(下午) '17:15'(晚上)
