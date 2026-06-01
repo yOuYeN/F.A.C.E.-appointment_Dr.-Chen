@@ -90,7 +90,8 @@
   .chip.free:hover{filter:brightness(1.06);}
   .chip.free:active{transform:scale(.94);}
   .chip.busy{background:var(--purple); text-decoration:line-through; text-decoration-thickness:1px; opacity:.92;}
-  .chip.mine{background:var(--mine); cursor:default;}
+  .chip.mine{background:var(--mine); cursor:pointer; transition:filter .08s;}
+  .chip.mine:hover{filter:brightness(1.08);}
 
   #toast{
     position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(12px);
@@ -139,7 +140,7 @@
 <div id="toast"></div>
 
 <!-- 預約資料與排程設定抽到共用檔（公開、無姓名）；本機後台 admin.html 也讀同一份 -->
-<script src="config.js?v=3"></script>
+<script src="config.js?v=4"></script>
 <script>
 /* 設定請改 config.js（以下為渲染邏輯，免改） */
 const WHO_TOKEN = new URLSearchParams(location.search).get('who')||'';
@@ -237,7 +238,8 @@ function buildMonth(monthStr){
         const mine = isMine(iso,s.key,wd);
         const booked = !mine&&isBooked(iso,s.key,wd);
         if(mine){
-          inner += '<span class="chip mine">★ '+s.label+'</span>';
+          const cancelMsg = '想取消 '+m+'/'+day+' ('+WD_NAMES[wd]+') '+s.copy+' 的預約';
+          inner += '<span class="chip mine" data-cancel="'+cancelMsg+'">★ '+s.label+'</span>';
         } else if(booked){
           inner += '<span class="chip busy">'+s.label+'</span>';
         } else {
@@ -319,7 +321,12 @@ function fallbackCopy(t){
   showToast(ok ? ('已複製：'+t+' (貼到官方 LINE 傳送)') : ('請手動傳送：'+t));
 }
 document.getElementById('calendar').addEventListener('click', function(e){
-  if(e.target.closest('.chip.mine')){ showToast('★ 這是您的預約時段'); return; }
+  const mineChip = e.target.closest('.chip.mine');
+  if(mineChip){
+    const cancel = mineChip.getAttribute('data-cancel');
+    if(cancel) copyText(cancel);
+    return;
+  }
   const chip = e.target.closest('.chip.free');
   if(!chip) return;
   copyText(chip.getAttribute('data-msg'));
