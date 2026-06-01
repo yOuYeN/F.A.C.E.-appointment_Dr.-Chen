@@ -4,6 +4,8 @@ admin.html
 names.local.js
 # 本機歷史名單（病人個資）— 絕不上傳 GitHub
 history.local.js
+# 本機統計頁（含病人姓名）— 絕不上傳 GitHub
+*.local.html
 # 本機開啟捷徑
 開啟後台.command
 *.command
