@@ -7,6 +7,7 @@
 <style>
   :root{
     --bg:#EDE8E1; --card:#FBF9F6; --ink:#4A4540; --muted:#9A938B;
+    --mine:#C4A05A;     /* 莫蘭迪金＝您的預約 */
     --purple:#A292A8;   /* 莫蘭迪紫＝已約 */
     --blue:#8FA9B4;     /* 莫蘭迪藍＝可約 */
     --sage:#9AAB97;     /* 龜山 */
@@ -35,6 +36,7 @@
   .swatch.b{background:var(--blue);}
   .swatch.g{background:var(--sage);}
   .swatch.c{background:var(--clay);}
+  .swatch.m{background:var(--mine);}
   .note{font-size:13px; color:var(--muted); margin-top:8px;}
   .contact{font-size:14px; margin-top:8px; padding-top:8px; border-top:1px dashed var(--line);}
   .contact b{color:var(--ink);}
@@ -88,6 +90,7 @@
   .chip.free:hover{filter:brightness(1.06);}
   .chip.free:active{transform:scale(.94);}
   .chip.busy{background:var(--purple); text-decoration:line-through; text-decoration-thickness:1px; opacity:.92;}
+  .chip.mine{background:var(--mine); cursor:default;}
 
   #toast{
     position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(12px);
@@ -139,6 +142,7 @@
 <script src="config.js"></script>
 <script>
 /* 設定請改 config.js（以下為渲染邏輯，免改） */
+const WHO_TOKEN = new URLSearchParams(location.search).get('who')||'';
 const WD_NAMES = ['日','一','二','三','四','五','六'];
 
 function ymd(d){
@@ -177,6 +181,17 @@ function clinicForDate(d){
 function isBooked(iso, key, wd){
   if(wd===0 && key==='11:00' && CONFIG.sundayMorningFixed && !(CONFIG.sundayMorningSkip||[]).includes(iso)) return true;
   return CONFIG.bookings.some(b=>b.date===iso && b.slot===key);
+}
+
+function isMine(iso,key,wd){
+  if(!WHO_TOKEN) return false;
+  if(wd===0&&key==='11:00'&&CONFIG.sundayMorningFixed&&
+     !(CONFIG.sundayMorningSkip||[]).includes(iso)&&
+     CONFIG.sundayMorningWho&&CONFIG.sundayMorningWho===WHO_TOKEN) return true;
+  return CONFIG.bookings.some(b=>{
+    if(b.date!==iso||b.slot!==key) return false;
+    return Array.isArray(b.who)?b.who.includes(WHO_TOKEN):b.who===WHO_TOKEN;
+  });
 }
 
 function buildMonth(monthStr){
@@ -219,8 +234,11 @@ function buildMonth(monthStr){
       inner += '<span class="loc '+locCls+'">'+raw.loc+'</span>';
       inner += '<span class="daynum">'+day+'</span><div class="chips">';
       raw.slots.forEach(s=>{
-        const booked = isBooked(iso, s.key, wd);
-        if(booked){
+        const mine = isMine(iso,s.key,wd);
+        const booked = !mine&&isBooked(iso,s.key,wd);
+        if(mine){
+          inner += '<span class="chip mine">★ '+s.label+'</span>';
+        } else if(booked){
           inner += '<span class="chip busy">'+s.label+'</span>';
         } else {
           const msg = '想預約 '+m+'/'+day+' ('+WD_NAMES[wd]+') '+s.copy;
@@ -240,6 +258,13 @@ function buildMonth(monthStr){
 }
 
 document.getElementById('calendar').innerHTML = CONFIG.months.map(buildMonth).join('');
+if(WHO_TOKEN){
+  const leg = document.querySelector('.legend');
+  const k = document.createElement('span');
+  k.className='key';
+  k.innerHTML='<span class="swatch m"></span>您的預約';
+  leg.insertBefore(k,leg.children[1]);
+}
 
 /* ---- 月份快速跳轉 ---- */
 (function(){
@@ -294,6 +319,7 @@ function fallbackCopy(t){
   showToast(ok ? ('已複製：'+t+' (貼到官方 LINE 傳送)') : ('請手動傳送：'+t));
 }
 document.getElementById('calendar').addEventListener('click', function(e){
+  if(e.target.closest('.chip.mine')){ showToast('★ 這是您的預約時段'); return; }
   const chip = e.target.closest('.chip.free');
   if(!chip) return;
   copyText(chip.getAttribute('data-msg'));
