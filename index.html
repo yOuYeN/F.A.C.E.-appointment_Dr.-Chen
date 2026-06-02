@@ -41,6 +41,11 @@
   .note{font-size:13px; color:var(--muted); margin-top:8px;}
   .contact{font-size:14px; margin-top:8px; padding-top:8px; border-top:1px dashed var(--line);}
   .contact b{color:var(--ink);}
+  .share{max-width:560px; margin:26px auto 6px;}
+  .share-desc{font-size:13px; color:var(--muted); text-align:center; line-height:1.6; margin:20px 0 9px;}
+  .share-desc b{color:var(--ink);}
+  .sharebtn{display:inline-block; text-decoration:none; font-weight:600; color:#fff; background:var(--sage); padding:11px 26px; border-radius:999px;}
+  .sharebtn.alt{background:var(--blue);}
 
   .monthnav{
     position:sticky; top:0; z-index:20;
@@ -133,14 +138,24 @@
       <span class="key"><span class="swatch c"></span>林口</span>
     </div>
     <p class="note">點選藍色 (可預約) 時段，會自動複製預約訊息，再貼到官方 LINE 傳送即可。<span id="cancelNote" style="display:none">點選金色 (★ 您的預約) 時段，可複製取消訊息。</span>週五早上時間彈性 (09:00 - 12:00 內皆可)；<br>週六早上採排班，開診日期於前一個月月初公告 (標示「待定」者表未確定，敬請耐心等候更新)。</p>
-    <p class="contact"><b>預約方式：</b>請私訊陳醫師<b>官方 LINE</b>，把複製好的訊息貼上傳送即可完成預約。</p>
+    <p class="contact" style="margin-bottom:0; padding-top:16px; padding-bottom:4px;"><b>預約方式：</b>請私訊陳醫師<b>官方 LINE</b>，把複製好的訊息貼上傳送即可完成預約。</p>
   </div>
 
   <div id="calendar"></div>
 
-  <p style="text-align:center; margin:26px 0 6px;">
-    <a href="門診表.html" style="display:inline-block; text-decoration:none; font-weight:600; color:#fff; background:var(--sage); padding:11px 26px; border-radius:999px;">📋 查看完整門診時間表 ›</a>
-  </p>
+  <div class="share">
+    <p class="share-desc">若要分享給看「<b>一般門診</b>」（非美顏針）的親友，請使用下方門診時間表連結：</p>
+    <p style="text-align:center; margin:0;">
+      <a href="門診表.html" class="sharebtn">📋 查看完整門診時間表 ›</a>
+    </p>
+
+    <div id="faceShare" style="display:none;">
+      <p class="share-desc">若要分享給想「<b>施作美顏針</b>」的親友，請使用此公用預約連結：</p>
+      <p style="text-align:center; margin:0;">
+        <a href="https://youyen.github.io/F.A.C.E.-appointment_Dr.-Chen/" class="sharebtn alt">💉 美顏針公用預約連結 ›</a>
+      </p>
+    </div>
+  </div>
 
   <footer>畫面僅供查看當前空檔，實際預約以官方 LINE 確認為準。</footer>
 </div>
@@ -289,6 +304,7 @@ if(WHO_TOKEN){
   k.innerHTML='<span class="swatch m"></span>您的預約';
   leg.insertBefore(k,leg.children[1]);
   document.getElementById('cancelNote').style.display = '';
+  document.getElementById('faceShare').style.display = '';
 }
 
 /* ---- 月份快速跳轉 ---- */
