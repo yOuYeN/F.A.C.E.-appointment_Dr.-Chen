@@ -295,7 +295,7 @@
 </div>
 
 <!-- 讀美顏針預約共用設定（同一份 config.js → 報到時間自動同步） -->
-<script src="config.js"></script>
+<script src="config.js?v=7"></script>
 <script>
   // 七月代診（龜山，不提供美顏針）。診別：早/午/晚
   const LOCUM = {
@@ -341,22 +341,30 @@
     return out;
   }
 
-  // 單日報到時間覆寫（特例，只影響指定日期+診別；其他日照常算）
-  const REPORT_OVERRIDE = {
-    '2026-06-04': { '晚診':'請 18:00 後報到' },   // 6/4 佑珊提早 17:05 施作，美顏針較早結束
-  };
+  // 早到患者的報到覆寫：讀 config.js earlyArrival 的 report 欄（如佑珊週四 17:05 → 該日夜診一律「請 18:00 後報到」；她沒約則回正常）
+  function earlyReportFor(who, wd, slot){
+    const rules=(CFG.earlyArrival||{})[who];
+    if(!rules) return null;
+    const r=rules.find(x=> x.slot===slot && (x.wd===undefined||x.wd===wd) && x.report);
+    return r ? r.report : null;
+  }
 
   // 依美顏針預約算報到時間（與 config.js 同步）
   function reportNote(iso, band, d){
-    const ov = (REPORT_OVERRIDE[iso]||{})[band];
-    if(ov!==undefined) return ov;
     const slots=bandSlots(band);
-    let people=0, has11=false;
-    (CFG.bookings||[]).forEach(b=>{ if(b.date===iso && slots.includes(b.slot)){ if(b.slot==='11:00')has11=true; people+=personCount(b); } });
+    let people=0, has11=false, earlyRep=null;
+    (CFG.bookings||[]).forEach(b=>{
+      if(b.date===iso && slots.includes(b.slot)){
+        if(b.slot==='11:00')has11=true;
+        people+=personCount(b);
+        (Array.isArray(b.who)?b.who:[b.who]).forEach(w=>{ const rep=earlyReportFor(w, d.getDay(), b.slot); if(rep) earlyRep=rep; });
+      }
+    });
     if(band==='早診' && d.getDay()===0 && CFG.sundayMorningFixed && iso<=(CFG.sundayMorningFixedEndDate||'9999') && !((CFG.sundayMorningSkip||[]).includes(iso)) && iso>=ymd(new Date())){
       has11=true; people+=1;
     }
     if(people<=0) return '';
+    if(earlyRep) return earlyRep;   // 早到患者覆寫優先（如佑珊 17:05→18:00）
     if(band==='早診') return has11 ? '請 10:30 前報到' : (people>=2 ? '請 10:30 後報到' : '請 9:50 後報到');
     if(band==='午診') return '請 14:50 後報到';
     return '請 18:20 後報到';
