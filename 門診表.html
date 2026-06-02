@@ -341,8 +341,15 @@
     return out;
   }
 
+  // 單日報到時間覆寫（特例，只影響指定日期+診別；其他日照常算）
+  const REPORT_OVERRIDE = {
+    '2026-06-04': { '晚診':'請 18:00 後報到' },   // 6/4 佑珊提早 17:05 施作，美顏針較早結束
+  };
+
   // 依美顏針預約算報到時間（與 config.js 同步）
   function reportNote(iso, band, d){
+    const ov = (REPORT_OVERRIDE[iso]||{})[band];
+    if(ov!==undefined) return ov;
     const slots=bandSlots(band);
     let people=0, has11=false;
     (CFG.bookings||[]).forEach(b=>{ if(b.date===iso && slots.includes(b.slot)){ if(b.slot==='11:00')has11=true; people+=personCount(b); } });
