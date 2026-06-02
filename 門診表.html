@@ -146,6 +146,12 @@
     .cal-grid{min-width:620px;}
     .sess{font-size:12px;} .sess .rpt{font-size:12px;}
   }
+  /* 平板 / 手機橫向（601–920px）：縮月曆字＋加底部留白，避免報到字擠到被遮 */
+  @media(min-width:601px) and (max-width:920px){
+    .sess{font-size:12px;} .sess .b{margin-right:2px;}
+    .sess .rpt{font-size:12px; line-height:1.35;}
+    .cal-day{min-height:80px; padding:4px 5px 10px;}
+  }
 </style>
 </head>
 <body>
@@ -177,7 +183,7 @@
 
   <div class="notice">
     <span class="ic">📢</span>
-    <span><b>週六門診採排班制</b>，開診日期於前一個月月初公告，敬請留意診所最新公告。</span>
+    <span><b>週六門診採排班制</b>，開診日期於前一個月月初公告。若下方顯示「<b>本月週六開診日：依公告</b>」，敬請耐心等候更新。</span>
   </div>
 
   <!-- 六月 -->
