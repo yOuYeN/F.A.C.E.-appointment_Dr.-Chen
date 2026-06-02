@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>陳由晏醫師 · 門診時間表</title>
+<style>
+  :root{
+    --bg:#EDE8E1;        /* 米杏底（仿美顏針預約） */
+    --card:#FBF9F6;      /* 奶白卡 */
+    --ink:#4A4540;       /* 暖墨 */
+    --muted:#9A938B;     /* 暖灰 */
+    --line:#E3DCD2;      /* 邊線 */
+    --head:#8FA9B4;      /* 莫蘭迪藍（標題帶） */
+    --head-d:#6f8c99;
+    --sage:#9AAB97;      /* 龜山 */
+    --sage-bg:#ECF0EA;
+    --clay:#C2A29A;      /* 林口 */
+    --clay-bg:#F4EBE7;
+    --gold:#C4A05A;      /* 輪診（地點輪流） */
+    --gold-bg:#F6EEDD;
+    --tan:#E7DCC9;       /* 星期表頭底 */
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    line-height:1.55; padding:26px 14px 56px;
+  }
+  .wrap{max-width:880px; margin:0 auto;}
+
+  header.top{text-align:center; margin-bottom:24px;}
+  header.top .clinic{color:var(--head-d); font-weight:700; letter-spacing:3px; font-size:15.5px;}
+  header.top h1{margin:8px 0 4px; font-size:31px; letter-spacing:1.5px; color:var(--ink);}
+  header.top .sub{color:var(--muted); font-size:15px; letter-spacing:1px;}
+
+  .legend{display:flex; gap:18px; justify-content:center; flex-wrap:wrap;
+          margin:0 0 16px; font-size:15.5px; color:#4A4540; font-weight:600;}
+  .legend .dot{display:inline-block; width:15px; height:15px; border-radius:4px; vertical-align:-2px; margin-right:6px;}
+  .legend .dot.gs{background:var(--sage);} .legend .dot.lk{background:var(--clay);}
+
+  .notice{display:flex; align-items:center; gap:10px; width:fit-content; max-width:620px; margin:0 auto 26px;
+          background:var(--card); border:1px solid var(--line); border-radius:12px;
+          padding:12px 19px; font-size:15px; color:#5a534c; line-height:1.6;}
+  .notice .ic{font-size:17px; line-height:1.5;}
+  .notice b{color:var(--head-d);}
+
+  .seg{margin-bottom:28px; background:var(--card); border:1px solid var(--line);
+       border-radius:16px; overflow:hidden;}
+  .seg-head{
+    background:var(--head); color:#fff; padding:12px 20px;
+    display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;
+  }
+  .seg-head .m{font-size:21px; font-weight:700; letter-spacing:2px;}
+  .seg-head .tag{font-size:14px; opacity:.95; background:rgba(255,255,255,.22);
+                 padding:3px 12px; border-radius:20px;}
+
+  table{width:100%; border-collapse:collapse; font-size:17px; table-layout:fixed;}
+  th,td{border:1px solid var(--line); text-align:center; padding:13px 3px;}
+  thead th{background:var(--tan); color:#6a5d49; font-weight:700; font-size:18px; letter-spacing:1px;}
+  thead th.corner{background:var(--card); border-top:none; border-left:none;}
+  tbody th{background:#FAF6F0; text-align:center; width:128px;
+           font-weight:700; color:#5a534c; font-size:15.5px;}
+  tbody th .t{display:block; font-size:13.5px; font-weight:500; color:var(--muted); letter-spacing:.3px;}
+
+  .loc{display:inline-block; font-weight:700; font-size:17px; letter-spacing:1px;}
+  .loc.gs{color:#566d50;} .loc.lk{color:#8a5447;} .loc.rt{color:#9c7a32;}
+  td.gs{background:var(--sage-bg);} td.lk{background:var(--clay-bg);} td.rt{background:var(--gold-bg);}
+  td.none{color:#d4cdc3;}
+
+  .seg-foot{padding:11px 20px; font-size:14.5px; color:#6f675f;
+            border-top:1px dashed var(--line); display:flex; flex-direction:column; gap:3px;}
+  .seg-foot b{color:var(--head-d);}
+
+  .clinics{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:8px;}
+  .clinic-card{display:block; text-decoration:none; color:inherit;
+               background:var(--card); border:1px solid var(--line); border-radius:13px; padding:16px 18px;
+               transition:box-shadow .15s, transform .08s;}
+  .clinic-card:hover{box-shadow:0 3px 12px rgba(74,69,64,.12);}
+  .clinic-card:active{transform:scale(.99);}
+  .clinic-card .h{font-weight:700; letter-spacing:1px; margin-bottom:6px; font-size:18px;}
+  .clinic-card.lk .h{color:#8a5447;} .clinic-card.gs .h{color:#566d50;}
+  .clinic-card .l{font-size:15px; color:#6f675f; margin:4px 0; display:flex; gap:8px;}
+  .clinic-card .l .ic{opacity:.7;}
+  .clinic-card .map{font-size:14px; color:var(--head-d); margin-top:8px; font-weight:600;}
+
+  footer{text-align:center; color:var(--muted); font-size:13.5px; margin-top:30px;}
+
+  /* 雙頁切換 */
+  .toggle{display:flex; gap:8px; justify-content:center; margin:0 0 24px;}
+  .tbtn{border:1px solid var(--line); background:var(--card); color:var(--ink);
+        font:inherit; font-weight:600; font-size:16px; padding:9px 26px; border-radius:999px;
+        cursor:pointer; transition:background .15s, color .15s; letter-spacing:1px;}
+  .tbtn.active{background:var(--head); color:#fff; border-color:var(--head);}
+  .hidden{display:none;}
+
+  /* 月份 / 院區 快速跳轉 */
+  .jump{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:0 0 24px;}
+  .jump a{cursor:pointer; font-size:14.5px; font-weight:600; color:var(--head-d); background:var(--card);
+          border:1px solid var(--line); border-radius:999px; padding:6px 17px; text-decoration:none;}
+  .jump a:hover{background:var(--tan);}
+  .cal-month, .seg{scroll-margin-top:14px;}
+  @media(max-width:600px){ .jump a{font-size:13px; padding:5px 13px;} }
+
+  /* 月曆 */
+  .cal-month{margin-bottom:26px; background:var(--card); border:1px solid var(--line);
+             border-radius:16px; overflow:hidden;}
+  .cal-mhead{background:var(--head); color:#fff; padding:11px 20px; font-size:20px;
+             font-weight:700; letter-spacing:2px; display:flex; gap:12px; align-items:baseline; flex-wrap:wrap;}
+  .cal-mhead .tag{font-size:14px; opacity:.95; background:rgba(255,255,255,.22); padding:3px 12px; border-radius:20px; font-weight:600; letter-spacing:.5px;}
+  .scroll{overflow-x:auto;}
+  .cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:1px; background:var(--line);}
+  .cal-wd{text-align:center; font-size:14.5px; font-weight:700; color:#6a5d49; background:var(--tan); padding:8px 0;}
+  .cal-day{background:var(--card); min-height:84px; padding:4px 5px 7px;}
+  .cal-day.pad{background:#F4F0EA;}
+  .cal-day.off{background:#F1ECE5;}
+  .cal-day .dnum{font-size:13.5px; color:var(--muted); font-weight:700; text-align:right; margin-bottom:2px;}
+  .cal-day.off .rest{color:var(--muted); font-size:13.5px; text-align:center; margin-top:8px;}
+  .sess{margin-top:3px; border-radius:5px; padding:3px 5px; font-size:13px; line-height:1.4;}
+  .sess.gs{background:var(--sage-bg); color:#4f6049;}
+  .sess.lk{background:var(--clay-bg); color:#7a4f44;}
+  .sess .b{font-weight:700; margin-right:3px;}
+  .sess .lcm{background:var(--gold); color:#fff; border-radius:3px; padding:0 5px; font-size:11px; margin-left:4px; vertical-align:1px;}
+  .sess .rpt{display:block; color:#111; font-weight:700; font-size:13px; margin-top:2px;}
+  .p2legend{display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin:0 0 18px; font-size:15px; color:#5a534c;}
+  .p2legend .dot{display:inline-block; width:14px; height:14px; border-radius:4px; vertical-align:-1px; margin-right:6px;}
+  .p2legend .dot.gs{background:var(--sage);} .p2legend .dot.lk{background:var(--clay);} .p2legend .dot.rt{background:var(--gold);}
+  .p2note{margin:0 auto 24px; background:var(--card); border:1px solid var(--line);
+          border-radius:12px; padding:14px 20px; font-size:14.5px; color:#5a534c; line-height:1.75;}
+  .p2note b{color:var(--head-d);}
+
+  /* 手機（窄螢幕）：縮字並保留橫向捲動，確保正常觀看 */
+  @media(max-width:600px){
+    body{padding:20px 10px 48px;}
+    header.top h1{font-size:25px;}
+    .legend{font-size:14px; gap:14px;}
+    .notice{font-size:13.5px; padding:11px 15px;}
+    table{font-size:14px;}
+    th,td{padding:10px 2px;}
+    thead th{font-size:15px;}
+    tbody th{width:96px; font-size:13.5px;}
+    tbody th .t{font-size:12px;}
+    .loc{font-size:14.5px;}
+    .seg-head .m{font-size:19px;}
+    .clinics{grid-template-columns:1fr;}
+    .cal-grid{min-width:620px;}
+    .sess{font-size:12px;} .sess .rpt{font-size:12px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="clinic">聯生中醫診所</div>
+    <h1>陳由晏 醫師 · 門診時間表</h1>
+  </header>
+
+  <div class="toggle">
+    <button id="btn1" class="tbtn active" onclick="showPage(1)">每週時間表</button>
+    <button id="btn2" class="tbtn" onclick="showPage(2)">當月月曆</button>
+  </div>
+
+  <nav class="jump">
+    <a onclick="goJump('6')">6 月</a>
+    <a onclick="goJump('7')">7 月</a>
+    <a onclick="goJump('8')">8 月</a>
+    <a onclick="goJump('clinics')">院區資訊</a>
+  </nav>
+
+  <div id="page1">
+
+  <div class="legend">
+    <span><span class="dot gs"></span>龜山院區</span>
+    <span><span class="dot lk"></span>林口院區</span>
+  </div>
+
+  <div class="notice">
+    <span class="ic">📢</span>
+    <span><b>週六門診採排班制</b>，開診日期於前一個月月初公告，敬請留意診所最新公告。</span>
+  </div>
+
+  <!-- 六月 -->
+  <section class="seg" id="p1m6">
+    <div class="seg-head"><span class="m">2026 年 6 月</span><span class="tag">現行時段</span></div>
+    <table>
+      <thead><tr>
+        <th class="corner"></th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th><th>日</th>
+      </tr></thead>
+      <tbody>
+        <tr><th>早診<span class="t">09:00 – 12:00</span></th>
+          <td class="none">—</td><td class="none">—</td><td class="none">—</td><td class="none">—</td>
+          <td class="gs"><span class="loc gs">龜山</span></td><td class="gs"><span class="loc gs">龜山</span></td><td class="lk"><span class="loc lk">林口</span></td></tr>
+        <tr><th>午診<span class="t">14:00 – 17:00</span></th>
+          <td class="gs"><span class="loc gs">龜山</span></td><td class="none">—</td><td class="none">—</td><td class="none">—</td>
+          <td class="none">—</td><td class="none">—</td><td class="lk"><span class="loc lk">林口</span></td></tr>
+        <tr><th>晚診<span class="t">17:30 – 20:00</span></th>
+          <td class="none">—</td><td class="none">—</td><td class="none">—</td>
+          <td class="gs"><span class="loc gs">龜山</span></td><td class="none">—</td><td class="none">—</td><td class="none">—</td></tr>
+      </tbody>
+    </table>
+    <div class="seg-foot">
+      <span><b>本月週六開診日</b>：6/13、6/20</span>
+    </div>
+  </section>
+
+  <!-- 七月起 -->
+  <section class="seg" id="p1m7">
+    <div class="seg-head"><span class="m">2026 年 7 月</span><span class="tag">週六新增 午診 + 晚診</span></div>
+    <table>
+      <thead><tr>
+        <th class="corner"></th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th><th>日</th>
+      </tr></thead>
+      <tbody>
+        <tr><th>早診<span class="t">09:00 – 12:00</span></th>
+          <td class="none">—</td><td class="none">—</td><td class="none">—</td><td class="none">—</td>
+          <td class="gs"><span class="loc gs">龜山</span></td><td class="gs"><span class="loc gs">龜山</span></td><td class="lk"><span class="loc lk">林口</span></td></tr>
+        <tr><th>午診<span class="t">14:00 – 17:00</span></th>
+          <td class="gs"><span class="loc gs">龜山</span></td><td class="none">—</td><td class="none">—</td><td class="none">—</td>
+          <td class="none">—</td><td class="gs"><span class="loc gs">龜山</span></td><td class="lk"><span class="loc lk">林口</span></td></tr>
+        <tr><th>晚診<span class="t">17:30 – 20:00</span></th>
+          <td class="none">—</td><td class="none">—</td><td class="none">—</td>
+          <td class="gs"><span class="loc gs">龜山</span></td><td class="none">—</td><td class="gs"><span class="loc gs">龜山</span></td><td class="none">—</td></tr>
+      </tbody>
+    </table>
+    <div class="seg-foot">
+      <span><b>本月週六開診日</b>：7/11、7/18</span>
+      <span><b>休診</b>：7/4、7/25 ～ 7/29</span>
+    </div>
+  </section>
+
+  <!-- 八月起 -->
+  <section class="seg" id="p1m8">
+    <div class="seg-head"><span class="m">2026 年 8 月起</span><span class="tag">週五早診改 林口</span></div>
+    <table>
+      <thead><tr>
+        <th class="corner"></th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th><th>日</th>
+      </tr></thead>
+      <tbody>
+        <tr><th>早診<span class="t">09:00 – 12:00</span></th>
+          <td class="none">—</td><td class="none">—</td><td class="none">—</td><td class="none">—</td>
+          <td class="lk"><span class="loc lk">林口</span></td><td class="gs"><span class="loc gs">龜山</span></td><td class="lk"><span class="loc lk">林口</span></td></tr>
+        <tr><th>午診<span class="t">14:00 – 17:00</span></th>
+          <td class="gs"><span class="loc gs">龜山</span></td><td class="none">—</td><td class="none">—</td><td class="none">—</td>
+          <td class="none">—</td><td class="gs"><span class="loc gs">龜山</span></td><td class="lk"><span class="loc lk">林口</span></td></tr>
+        <tr><th>晚診<span class="t">17:30 – 20:00</span></th>
+          <td class="none">—</td><td class="none">—</td><td class="none">—</td>
+          <td class="gs"><span class="loc gs">龜山</span></td><td class="none">—</td><td class="gs"><span class="loc gs">龜山</span></td><td class="none">—</td></tr>
+      </tbody>
+    </table>
+    <div class="seg-foot">
+      <span><b>本月週六開診日</b>：依公告</span>
+    </div>
+  </section>
+
+  </div><!-- /page1 -->
+
+  <div id="page2" class="hidden">
+    <div class="p2legend">
+      <span><span class="dot gs"></span>龜山院區</span>
+      <span><span class="dot lk"></span>林口院區</span>
+      <span><span class="dot rt"></span>代診 (龜山)</span>
+    </div>
+    <div class="p2note">
+      <b>看診報到提醒</b>：標示「請○○後／前報到」的時段，表示該診已有美顏針預約，依預約人數安排，<b>會自動與線上預約同步更新</b>。<br>
+      早 = 早診 (09:00–12:00)、午 = 午診 (14:00–17:00)、晚 = 夜診 (17:30–20:00)；<b>代</b> = 代診 (該時段不提供美顏針)。
+    </div>
+    <div id="cal"></div>
+  </div>
+
+  <!-- 院區資訊（兩頁共用） -->
+  <div class="clinics" id="clinics">
+    <a class="clinic-card gs" href="https://maps.app.goo.gl/u9URe9bc74y1cUZJ6" target="_blank" rel="noopener">
+      <div class="h">龜山院區</div>
+      <div class="l"><span class="ic">📞</span><span>03-2115634</span></div>
+      <div class="l"><span class="ic">📍</span><span>桃園市龜山區文昌一街 5 號</span></div>
+      <div class="map">🗺 開啟 Google 地圖 ›</div>
+    </a>
+    <a class="clinic-card lk" href="https://maps.app.goo.gl/iXVjLjVCh69FLNFC6" target="_blank" rel="noopener">
+      <div class="h">林口院區</div>
+      <div class="l"><span class="ic">📞</span><span>02-2606-8190</span></div>
+      <div class="l"><span class="ic">📍</span><span>新北市林口區三民路 108 號</span></div>
+      <div class="map">🗺 開啟 Google 地圖 ›</div>
+    </a>
+  </div>
+
+  <footer>門診時段如有異動，以診所現場與每月公告為準</footer>
+
+</div>
+
+<!-- 讀美顏針預約共用設定（同一份 config.js → 報到時間自動同步） -->
+<script src="config.js"></script>
+<script>
+  // 七月代診（龜山，不提供美顏針）。診別：早/午/晚
+  const LOCUM = {
+    '2026-07-01':['早'], '2026-07-02':['午'], '2026-07-06':['早'],
+    '2026-07-07':['晚'], '2026-07-09':['午'], '2026-07-10':['午'],
+    '2026-07-13':['早'], '2026-07-14':['晚'], '2026-07-15':['早']
+  };
+  const CFG = (typeof CONFIG!=='undefined') ? CONFIG : {};
+
+  function goJump(t){
+    let el;
+    if(t==='clinics'){ el=document.getElementById('clinics'); }
+    else { const p = document.getElementById('page2').classList.contains('hidden') ? 'p1' : 'p2'; el=document.getElementById(p+'m'+t); }
+    if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  function showPage(n){
+    document.getElementById('page1').classList.toggle('hidden', n!==1);
+    document.getElementById('page2').classList.toggle('hidden', n!==2);
+    document.getElementById('btn1').classList.toggle('active', n===1);
+    document.getElementById('btn2').classList.toggle('active', n===2);
+    window.scrollTo(0,0);
+  }
+
+  function ymd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+  function personCount(b){ if(Array.isArray(b.who))return b.who.length; if(b.note){const m=b.note.match(/(\d+)\s*位/); if(m)return +m[1];} return 1; }
+  function bandSlots(band){ return band==='早診'?['09:00','11:00'] : band==='午診'?['13:55'] : ['17:15']; }
+
+  // 固定每週門診（含週五/週六轉換日邏輯，與預約系統一致）
+  function regularSessions(d){
+    const wd=d.getDay(), iso=ymd(d);
+    const friLk = iso >= (CFG.fridayToLinkouDate||'9999');
+    const satExtra = iso >= (CFG.saturdayExtraDate||'9999');
+    const out=[];
+    if(wd===1) out.push({band:'午診',loc:'龜山'});
+    else if(wd===4) out.push({band:'晚診',loc:'龜山'});
+    else if(wd===5) out.push({band:'早診',loc:friLk?'林口':'龜山'});
+    else if(wd===0){ out.push({band:'早診',loc:'林口'}); out.push({band:'午診',loc:'林口'}); }
+    else if(wd===6){
+      if((CFG.saturdayMorningDates||[]).includes(iso)) out.push({band:'早診',loc:'龜山'});
+      if(satExtra){ out.push({band:'午診',loc:'龜山'}); out.push({band:'晚診',loc:'龜山'}); }
+    }
+    return out;
+  }
+
+  // 依美顏針預約算報到時間（與 config.js 同步）
+  function reportNote(iso, band, d){
+    const slots=bandSlots(band);
+    let people=0, has11=false;
+    (CFG.bookings||[]).forEach(b=>{ if(b.date===iso && slots.includes(b.slot)){ if(b.slot==='11:00')has11=true; people+=personCount(b); } });
+    if(band==='早診' && d.getDay()===0 && CFG.sundayMorningFixed && iso<=(CFG.sundayMorningFixedEndDate||'9999') && !((CFG.sundayMorningSkip||[]).includes(iso)) && iso>=ymd(new Date())){
+      has11=true; people+=1;
+    }
+    if(people<=0) return '';
+    if(band==='早診') return has11 ? '請 10:30 前報到' : (people>=2 ? '請 10:30 後報到' : '請 9:50 後報到');
+    if(band==='午診') return '請 14:50 後報到';
+    return '請 18:20 後報到';
+  }
+
+  function sessionsFor(d){
+    const iso=ymd(d);
+    if((CFG.daysOff||[]).includes(iso)) return {off:true, list:[]};
+    const map={};
+    regularSessions(d).forEach(s=>{ map[s.band]={loc:s.loc, locum:false, note:reportNote(iso,s.band,d)}; });
+    (LOCUM[iso]||[]).forEach(code=>{ const band=code==='早'?'早診':code==='午'?'午診':'晚診'; if(!map[band]) map[band]={loc:'龜山', locum:true, note:''}; });
+    const order=['早診','午診','晚診'];
+    return {off:false, list: order.filter(b=>map[b]).map(b=>Object.assign({band:b},map[b]))};
+  }
+
+  function dayCell(d){
+    const info=sessionsFor(d);
+    let inner='<div class="dnum">'+d.getDate()+'</div>';
+    if(info.off) return '<div class="cal-day off">'+inner+'<div class="rest">休診</div></div>';
+    if(!info.list.length) return '<div class="cal-day">'+inner+'</div>';
+    info.list.forEach(s=>{
+      const cls = s.loc==='林口' ? 'lk' : 'gs';
+      inner += '<div class="sess '+cls+'"><span class="b">'+s.band[0]+'</span>'+s.loc
+            + (s.locum ? ' <span class="lcm">代</span>' : '')
+            + (s.note ? '<span class="rpt">'+s.note+'</span>' : '') + '</div>';
+    });
+    return '<div class="cal-day">'+inner+'</div>';
+  }
+
+  function buildMonth(y, m){ // m: 0-based
+    const first=new Date(y,m,1);
+    const ndays=new Date(y,m+1,0).getDate();
+    const lead=(first.getDay()+6)%7; // 週一為首
+    const tags={5:'現行時段',6:'週六加午+晚診 · 七月代診',7:'週五早診改林口'};
+    let g='<div class="cal-grid">';
+    ['一','二','三','四','五','六','日'].forEach(w=> g+='<div class="cal-wd">'+w+'</div>');
+    for(let i=0;i<lead;i++) g+='<div class="cal-day pad"></div>';
+    for(let dd=1;dd<=ndays;dd++) g+=dayCell(new Date(y,m,dd));
+    g+='</div>';
+    return '<div class="cal-month" id="p2m'+(m+1)+'"><div class="cal-mhead">'+y+' 年 '+(m+1)+' 月'
+         + (tags[m]?'<span class="tag">'+tags[m]+'</span>':'') + '</div><div class="scroll">'+g+'</div></div>';
+  }
+
+  document.getElementById('cal').innerHTML = buildMonth(2026,5)+buildMonth(2026,6)+buildMonth(2026,7);
+  if(location.hash==='#p2') showPage(2);
+</script>
+</body>
+</html>
