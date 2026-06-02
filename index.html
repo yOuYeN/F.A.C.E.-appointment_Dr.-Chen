@@ -162,7 +162,7 @@
 <div id="toast"></div>
 
 <!-- 預約資料與排程設定抽到共用檔（公開、無姓名）；本機後台 admin.html 也讀同一份 -->
-<script src="config.js?v=5"></script>
+<script src="config.js?v=6"></script>
 <script>
 /* 設定請改 config.js（以下為渲染邏輯，免改） */
 const WHO_TOKEN = new URLSearchParams(location.search).get('who')||'';
@@ -204,6 +204,14 @@ function clinicForDate(d){
     slots.sort((a,b)=> a.key<b.key ? -1 : (a.key>b.key?1:0));
   }
   return {loc, slots};
+}
+
+// 個別患者提早報到：回傳調整後時間字串或 null（僅該患者專屬連結套用）
+function earlyTimeFor(who, wd, slot){
+  const rules = (CONFIG.earlyArrival||{})[who];
+  if(!rules) return null;
+  const r = rules.find(x=> x.slot===slot && (x.wd===undefined || x.wd===wd));
+  return r ? r.time : null;
 }
 
 function isBooked(iso, key, wd){
@@ -275,8 +283,11 @@ function buildMonth(monthStr){
         const mine = isMine(iso,s.key,wd);
         const booked = !mine&&isBooked(iso,s.key,wd);
         if(mine){
-          const cancelMsg = '想取消 '+m+'/'+day+' ('+WD_NAMES[wd]+') '+s.copy+' 的預約';
-          inner += '<span class="chip mine" data-cancel="'+cancelMsg+'">★ '+s.label+'</span>';
+          const early = earlyTimeFor(WHO_TOKEN, wd, s.key);
+          const lbl = early || s.label;
+          const cpy = early || s.copy;
+          const cancelMsg = '想取消 '+m+'/'+day+' ('+WD_NAMES[wd]+') '+cpy+' 的預約';
+          inner += '<span class="chip mine" data-cancel="'+cancelMsg+'">★ '+lbl+'</span>';
         } else if(booked){
           inner += '<span class="chip busy">'+s.label+'</span>';
         } else {
@@ -303,8 +314,13 @@ if(WHO_TOKEN){
   k.className='key';
   k.innerHTML='<span class="swatch m"></span>您的預約';
   leg.insertBefore(k,leg.children[1]);
-  document.getElementById('cancelNote').style.display = '';
-  document.getElementById('faceShare').style.display = '';
+  if((CONFIG.staffWho||[]).includes(WHO_TOKEN)){
+    // 員工精簡頁：只留月曆，隱藏說明/預約方式/底部分享/頁尾
+    document.querySelectorAll('.panel .note, .panel .contact, .share, footer').forEach(el=>el.remove());
+  } else {
+    document.getElementById('cancelNote').style.display = '';
+    document.getElementById('faceShare').style.display = '';
+  }
 }
 
 /* ---- 月份快速跳轉 ---- */
