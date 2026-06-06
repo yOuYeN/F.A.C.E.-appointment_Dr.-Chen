@@ -115,19 +115,31 @@
 
   /* 我的歷程頁 */
   .hist-summary{background:var(--card); border:1px solid var(--line); border-radius:12px;
-                padding:13px 16px; margin:0 0 14px; font-size:14px; color:var(--ink); text-align:center;}
-  .hist-summary b{color:var(--sage); font-size:17px;}
-  .hist-list{display:flex; flex-direction:column; gap:9px;}
-  .hist-card{display:flex; align-items:center; gap:12px; background:var(--card);
-             border:1px solid var(--line); border-radius:12px; padding:12px 15px;}
-  .hist-date{font-weight:700; font-size:15px; color:var(--ink);}
-  .hist-wd{color:var(--muted); font-weight:500; font-size:13px;}
-  .hist-note{font-size:13px; color:var(--muted); margin-top:2px;}
-  .hist-badge{margin-left:auto; flex-shrink:0; font-size:12px; font-weight:700; color:#fff;
-              padding:3px 11px; border-radius:7px; letter-spacing:1px;}
-  .hist-badge.gs{background:var(--sage);} .hist-badge.lk{background:var(--clay);}
-  .hist-badge.off{background:#9479A6;}
+                padding:13px 16px; margin:0 0 20px; font-size:14px; color:var(--ink); text-align:center;}
+  .hist-summary b{color:var(--blue); font-size:17px;}
   .hist-empty{text-align:center; color:var(--muted); font-size:14px; padding:46px 12px; line-height:1.9;}
+
+  /* 時間軸（左側圓圈寫次數 + 右側橫條） */
+  .tl{position:relative; padding:6px 0 4px;}
+  .tl::before{content:''; position:absolute; left:29px; top:2px; bottom:8px; width:3px;
+              background:var(--blue); opacity:.4; border-radius:2px;}
+  .tl::after{content:''; position:absolute; left:23px; top:-7px;
+             border-left:7px solid transparent; border-right:7px solid transparent;
+             border-bottom:11px solid var(--blue); opacity:.55;}
+  .tl-item{position:relative; padding-left:46px; margin-bottom:11px; display:flex;}
+  .tl-node{position:absolute; left:8px; top:50%; transform:translateY(-50%);
+           width:44px; height:44px; border-radius:50%; background:#D9E2E8; border:3px solid var(--bg);
+           display:flex; align-items:center; justify-content:center;
+           font-weight:800; font-size:16px; color:#5d7480; z-index:2; box-shadow:0 1px 3px rgba(0,0,0,.08);}
+  .tl-bar{flex:1; min-height:50px; background:var(--blue); color:#fff; border-radius:11px;
+          padding:10px 15px 10px 28px; display:flex; align-items:center; gap:10px;
+          clip-path:polygon(0 0, 100% 0, 100% 100%, 0 100%, 15px 50%);}
+  .tl-date{font-weight:700; font-size:15px; letter-spacing:.5px;}
+  .tl-wd{font-size:13px; opacity:.85;}
+  .tl-badge{margin-left:auto; flex-shrink:0; font-size:12px; font-weight:700; color:#fff;
+            background:rgba(255,255,255,.22); padding:3px 11px; border-radius:7px; letter-spacing:1px;}
+  .tl-badge.gs{background:var(--sage);} .tl-badge.lk{background:var(--clay);}
+  .tl-badge.off{background:#9479A6;}
 
   #toast{
     position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(12px);
@@ -399,25 +411,26 @@ function renderHistory(){
     return;
   }
   const latest = data[0].date.replace(/-/g,'/');
-  let html = '<div class="hist-summary">您共施作 <b>'+data.length+'</b> 次　·　最近一次 '+latest+'</div><div class="hist-list">';
-  data.forEach(h=>{
+  let html = '<div class="hist-summary">您共施作 <b>'+data.length+'</b> 次　·　最近一次 '+latest+'</div><div class="tl">';
+  data.forEach((h,i)=>{
     const d = new Date(h.date+'T00:00:00');
     const wd = WD_NAMES[d.getDay()];
     const dateStr = h.date.replace(/-/g,'/');
     const locCls = h.loc==='龜山' ? 'gs' : (h.loc==='林口' ? 'lk' : 'off');
     const slotTxt = h.slot ? ' · '+h.slot : '';
-    html += '<div class="hist-card"><div>'
-      + '<span class="hist-date">'+dateStr+'</span> <span class="hist-wd">（'+wd+'）'+slotTxt+'</span>'
-      + (h.note ? '<div class="hist-note">'+h.note+'</div>' : '')
+    const m = (h.note||'').match(/(\d+)/);          // 圓圈內顯示「第幾次」的數字
+    const num = m ? m[1] : String(data.length - i);  // 無註記時以序位回推
+    html += '<div class="tl-item">'
+      + '<div class="tl-node">'+num+'</div>'
+      + '<div class="tl-bar">'
+      +   '<span class="tl-date">'+dateStr+'</span><span class="tl-wd">（'+wd+'）'+slotTxt+'</span>'
+      +   (h.loc ? '<span class="tl-badge '+locCls+'">'+h.loc+'</span>' : '')
       + '</div>'
-      + (h.loc ? '<span class="hist-badge '+locCls+'">'+h.loc+'</span>' : '')
       + '</div>';
   });
   html += '</div>';
   el.innerHTML = html;
 }
-// 深連結：?who=PID#history 直接開歷程頁（放在函式與 _histLoaded 宣告之後，避開 TDZ）
-if(WHO_TOKEN && location.hash === '#history') switchTab('history');
 
 /* ---- 月份快速跳轉 ---- */
 (function(){
