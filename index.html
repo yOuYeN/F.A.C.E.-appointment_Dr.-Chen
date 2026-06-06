@@ -13,6 +13,23 @@
     --sage:#9AAB97;     /* 龜山 */
     --clay:#C2A29A;     /* 林口 */
     --line:#E3DCD2;
+    --tlbar:#DCE4EA;    /* 歷程時間軸橫條底 */
+    --navbg:rgba(237,232,225,.92);  /* 月份 sticky 列底 */
+    --blank:#F4F0EA;    /* 無診空格 */ --offbg:#F0EBE4;  /* 休診格 */
+  }
+  /* ── 主題（只有 ?who= 客人可切換；語意色 可約/已約/院區 各主題皆保留辨識度）── */
+  body[data-theme="cool"]{   /* 冷靈藍灰 */
+    --bg:#E6EAED; --card:#F6F9FB; --ink:#3D4A50; --muted:#869298;
+    --blue:#7C97AB; --line:#D8E1E5; --tlbar:#D5DFE6; --navbg:rgba(230,234,237,.92);
+  }
+  body[data-theme="pink"]{   /* 櫻粉嫩 */
+    --bg:#F4E8EA; --card:#FCF6F7; --ink:#574247; --muted:#AE96A0;
+    --line:#EBDBDF; --tlbar:#EAD9E0; --navbg:rgba(244,232,234,.92);
+  }
+  body[data-theme="dark"]{   /* 質感深色 */
+    --bg:#2E2B29; --card:#3A3633; --ink:#ECE6DF; --muted:#A89E94;
+    --blue:#8FA9B4; --line:#4A453F; --tlbar:#454F46; --navbg:rgba(46,43,41,.92);
+    --blank:#332F2C; --offbg:#2F2B28;
   }
   *{box-sizing:border-box;}
   body{
@@ -29,7 +46,10 @@
     background:var(--card); border:1px solid var(--line); border-radius:14px;
     padding:12px 14px; margin:12px 0;
   }
-  .legend{display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; font-size:13px;}
+  .legend{display:flex; flex-wrap:wrap; gap:10px 14px; align-items:center; justify-content:space-between; font-size:13px;}
+  .legend-grp{display:flex; flex-wrap:wrap; gap:10px 14px; align-items:center;}
+  .legend-loc{padding-left:15px; border-left:1px solid var(--line);}
+  @media(max-width:560px){ .legend-loc{border-left:none; padding-left:0;} }
   .key{display:inline-flex; align-items:center; gap:6px;}
   .swatch{width:16px; height:16px; border-radius:5px; display:inline-block;}
   .swatch.p{background:var(--purple);}
@@ -51,7 +71,7 @@
     position:sticky; top:0; z-index:20;
     display:flex; gap:8px; justify-content:center; flex-wrap:wrap;
     padding:10px 6px 8px; margin:0 -12px 6px;
-    background:rgba(237,232,225,.92);
+    background:var(--navbg);
     backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
   }
   .mbtn{
@@ -72,8 +92,8 @@
     min-height:64px; padding:4px 4px 5px; position:relative; overflow:hidden;
   }
   .cell.empty{background:transparent; border-color:transparent; min-height:0;}
-  .cell.blank{background:#F4F0EA; border-style:dashed; opacity:.65;}
-  .cell.off{background:#F0EBE4; border-style:dashed;}
+  .cell.blank{background:var(--blank); border-style:dashed; opacity:.65;}
+  .cell.off{background:var(--offbg); border-style:dashed;}
   .cell.past{opacity:.38;}
   .cell.today{outline:2px solid var(--sage); outline-offset:-2px;}
   .daynum{font-size:12px; font-weight:700; color:var(--ink);}
@@ -113,6 +133,14 @@
   .tbtn:active{transform:scale(.96);}
   .tbtn.active{background:var(--sage); color:#fff; border-color:var(--sage);}
 
+  /* 配色切換（只在帶 ?who= 時顯示） */
+  .themebar{display:flex; align-items:center; justify-content:center; gap:9px; margin:0 0 16px;}
+  .theme-label{font-size:13px; color:var(--muted); font-weight:600; letter-spacing:.5px;}
+  .sw{width:25px; height:25px; border-radius:50%; border:2px solid var(--card);
+      box-shadow:0 0 0 1px var(--line); cursor:pointer; padding:0; transition:transform .1s;}
+  .sw:active{transform:scale(.88);}
+  .sw.sel{box-shadow:0 0 0 2px var(--ink);}
+
   /* 我的歷程頁 */
   .hist-summary{background:var(--card); border:1px solid var(--line); border-radius:12px;
                 padding:13px 16px; margin:0 0 20px; font-size:14px; color:var(--ink); text-align:center;}
@@ -131,7 +159,7 @@
            width:44px; height:44px; border-radius:50%; background:var(--blue); border:3px solid var(--bg);
            display:flex; align-items:center; justify-content:center;
            font-weight:800; font-size:16px; color:#fff; z-index:2; box-shadow:0 1px 3px rgba(0,0,0,.12);}
-  .tl-bar{flex:1; min-height:50px; background:#DCE4EA; color:var(--ink); border-radius:11px;
+  .tl-bar{flex:1; min-height:50px; background:var(--tlbar); color:var(--ink); border-radius:11px;
           padding:10px 15px 10px 28px; display:flex; align-items:center; gap:10px;
           clip-path:polygon(0 0, 100% 0, 100% 100%, 0 100%, 15px 50%);}
   .tl-date{font-weight:700; font-size:15px; letter-spacing:.5px;}
@@ -173,16 +201,28 @@
     <button class="tbtn" id="tabBtn2" type="button">📖 我的歷程</button>
   </div>
 
+  <div class="themebar" id="themebar" style="display:none;">
+    <span class="theme-label">🎨 配色</span>
+    <button class="sw" type="button" data-theme="" title="莓奉暖" style="background:#D8C3A5"></button>
+    <button class="sw" type="button" data-theme="cool" title="冷靈藍灰" style="background:#9DB2C0"></button>
+    <button class="sw" type="button" data-theme="pink" title="櫻粉嫩" style="background:#E2B6C4"></button>
+    <button class="sw" type="button" data-theme="dark" title="質感深色" style="background:#3A3633"></button>
+  </div>
+
   <div id="bookingPage">
   <nav id="monthNav" class="monthnav" aria-label="月份快速跳轉"></nav>
 
   <div class="panel">
     <div class="legend">
-      <span class="key"><span class="swatch b"></span>可預約</span>
-      <span class="key"><span class="swatch p"></span>已約滿</span>
-      <span class="key"><span class="swatch n"></span>待定</span>
-      <span class="key"><span class="swatch g"></span>龜山</span>
-      <span class="key"><span class="swatch c"></span>林口</span>
+      <div class="legend-grp legend-status">
+        <span class="key"><span class="swatch b"></span>可預約</span>
+        <span class="key"><span class="swatch p"></span>已約滿</span>
+        <span class="key"><span class="swatch n"></span>待定</span>
+      </div>
+      <div class="legend-grp legend-loc">
+        <span class="key"><span class="swatch g"></span>龜山</span>
+        <span class="key"><span class="swatch c"></span>林口</span>
+      </div>
     </div>
     <p class="note">點選藍色 (可預約) 時段，會自動複製預約訊息，再貼到官方 LINE 傳送即可。<span id="cancelNote" style="display:none">點選金色 (★ 您的預約) 時段，可複製取消訊息。</span>週五早上時間彈性 (09:00 - 12:00 內皆可)；<br>週六早上採排班，開診日期於前一個月月初公告 (標示「待定」者表未確定，敬請耐心等候更新)。</p>
     <p class="contact" style="margin-bottom:0; padding-top:16px; padding-bottom:4px;"><b>預約方式：</b>請私訊陳醫師<b>官方 LINE</b>，把複製好的訊息貼上傳送即可完成預約。</p>
@@ -361,15 +401,28 @@ function buildMonth(monthStr){
 
 document.getElementById('calendar').innerHTML = CONFIG.months.map(buildMonth).join('');
 if(WHO_TOKEN){
-  const leg = document.querySelector('.legend');
+  const statusGrp = document.querySelector('.legend-status');
   const k = document.createElement('span');
   k.className='key';
   k.innerHTML='<span class="swatch m"></span>您的預約';
-  leg.insertBefore(k,leg.children[1]);
+  statusGrp.insertBefore(k, statusGrp.children[1]);   // 插在「可預約」後、狀態組內
   // 顯示 Tab 列並綁定切換（「我的歷程」只有專屬連結 ?who= 看得到）
   document.getElementById('tabs').style.display = '';
   document.getElementById('tabBtn1').addEventListener('click', ()=>switchTab('booking'));
   document.getElementById('tabBtn2').addEventListener('click', ()=>switchTab('history'));
+  // 配色切換（只有專屬連結客人可換；選擇記在 localStorage、下次開維持）
+  const tbar = document.getElementById('themebar');
+  tbar.style.display = '';
+  let _savedTheme = '';
+  try{ _savedTheme = localStorage.getItem('faceTheme') || ''; }catch(e){}
+  applyTheme(_savedTheme);
+  tbar.querySelectorAll('.sw').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const t = b.dataset.theme || '';
+      applyTheme(t);
+      try{ localStorage.setItem('faceTheme', t); }catch(e){}
+    });
+  });
   if((CONFIG.staffWho||[]).includes(WHO_TOKEN)){
     // 員工精簡頁：只留月曆，隱藏說明/預約方式/底部分享/頁尾；並設為純檢視（時段不可點）
     document.querySelectorAll('.panel .note, .panel .contact, .share, footer').forEach(el=>el.remove());
@@ -378,6 +431,13 @@ if(WHO_TOKEN){
     document.getElementById('cancelNote').style.display = '';
     document.getElementById('faceShare').style.display = '';
   }
+}
+
+/* ---- 配色主題（套整頁；語意色保留辨識度） ---- */
+function applyTheme(t){
+  if(t) document.body.setAttribute('data-theme', t);
+  else document.body.removeAttribute('data-theme');
+  document.querySelectorAll('.sw').forEach(b=> b.classList.toggle('sel', (b.dataset.theme||'') === (t||'')));
 }
 
 /* ---- 我的歷程 Tab（資料 history-public.js 去姓名，首次切過去才載入） ---- */
