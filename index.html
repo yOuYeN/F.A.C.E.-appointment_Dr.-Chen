@@ -10,26 +10,32 @@
     --mine:#C4A05A;     /* 莫蘭迪金＝您的預約 */
     --purple:#A292A8;   /* 莫蘭迪紫＝已約 */
     --blue:#8FA9B4;     /* 莫蘭迪藍＝可約 */
-    --sage:#9AAB97;     /* 龜山 */
-    --clay:#C2A29A;     /* 林口 */
+    --sage:#9AAB97;     /* 龜山（語意色，不隨主題變） */
+    --clay:#C2A29A;     /* 林口（語意色，不隨主題變） */
     --line:#E3DCD2;
     --tlbar:#DCE4EA;    /* 歷程時間軸橫條底 */
     --navbg:rgba(237,232,225,.92);  /* 月份 sticky 列底 */
     --blank:#F4F0EA;    /* 無診空格 */ --offbg:#F0EBE4;  /* 休診格 */
+    --accent:#84739E;   /* 主強調色（選中 Tab／月份／今天框／歷程圓圈）＝莫蘭迪紫，異於已約紫 */
   }
   /* ── 主題（只有 ?who= 客人可切換；語意色 可約/已約/院區 各主題皆保留辨識度）── */
   body[data-theme="cool"]{   /* 冷靈藍灰 */
     --bg:#E6EAED; --card:#F6F9FB; --ink:#3D4A50; --muted:#869298;
-    --blue:#7C97AB; --line:#D8E1E5; --tlbar:#D5DFE6; --navbg:rgba(230,234,237,.92);
+    --blue:#7C97AB; --line:#D8E1E5; --tlbar:#D5DFE6; --navbg:rgba(230,234,237,.92); --accent:#7E86AC;
   }
   body[data-theme="pink"]{   /* 櫻粉嫩 */
     --bg:#F4E8EA; --card:#FCF6F7; --ink:#574247; --muted:#AE96A0;
-    --line:#EBDBDF; --tlbar:#EAD9E0; --navbg:rgba(244,232,234,.92);
+    --line:#EBDBDF; --tlbar:#EAD9E0; --navbg:rgba(244,232,234,.92); --accent:#AE7BA0;
+  }
+  body[data-theme="lavender"]{ /* 霧霾薰衣草（第 5 色） */
+    --bg:#EBE7F0; --card:#F8F6FC; --ink:#4B4556; --muted:#988FA6;
+    --line:#E2DBEC; --tlbar:#E4DCF1; --navbg:rgba(235,231,240,.92);
+    --blank:#F0ECF6; --offbg:#ECE7F4; --accent:#826FA0;
   }
   body[data-theme="dark"]{   /* 質感深色 */
     --bg:#2E2B29; --card:#3A3633; --ink:#ECE6DF; --muted:#A89E94;
     --blue:#8FA9B4; --line:#4A453F; --tlbar:#454F46; --navbg:rgba(46,43,41,.92);
-    --blank:#332F2C; --offbg:#2F2B28;
+    --blank:#332F2C; --offbg:#2F2B28; --accent:#9E8CB6;
   }
   *{box-sizing:border-box;}
   body{
@@ -80,7 +86,7 @@
     cursor:pointer; transition:filter .15s, transform .08s, background .15s, color .15s;
   }
   .mbtn:active{transform:scale(.95);}
-  .mbtn.active{background:var(--sage); color:#fff; border-color:var(--sage);}
+  .mbtn.active{background:var(--accent); color:#fff; border-color:var(--accent);}
 
   .month{margin:18px 0; scroll-margin-top:64px;}
   .month h2{font-size:16px; margin:0 0 8px; padding-left:4px;}
@@ -95,7 +101,7 @@
   .cell.blank{background:var(--blank); border-style:dashed; opacity:.65;}
   .cell.off{background:var(--offbg); border-style:dashed;}
   .cell.past{opacity:.38;}
-  .cell.today{outline:2px solid var(--sage); outline-offset:-2px;}
+  .cell.today{outline:2px solid var(--accent); outline-offset:-2px;}
   .daynum{font-size:12px; font-weight:700; color:var(--ink);}
   .loc{
     float:right; font-size:10px; color:#fff; border-radius:5px;
@@ -131,15 +137,32 @@
         font:inherit; font-weight:600; font-size:15px; padding:8px 22px; border-radius:999px;
         cursor:pointer; transition:background .15s, color .15s; letter-spacing:.5px;}
   .tbtn:active{transform:scale(.96);}
-  .tbtn.active{background:var(--sage); color:#fff; border-color:var(--sage);}
+  .tbtn.active{background:var(--accent); color:#fff; border-color:var(--accent);}
 
-  /* 配色切換（只在帶 ?who= 時顯示） */
-  .themebar{display:flex; align-items:center; justify-content:center; gap:9px; margin:0 0 16px;}
-  .theme-label{font-size:13px; color:var(--muted); font-weight:600; letter-spacing:.5px;}
-  .sw{width:25px; height:25px; border-radius:50%; border:2px solid var(--card);
+  /* 配色切換：右側可收合浮動面板（只在帶 ?who= 時顯示） */
+  .palette{position:fixed; top:70px; right:12px; z-index:60;
+           display:flex; flex-direction:column; align-items:center; gap:9px;}
+  .pal-toggle{width:40px; height:40px; border-radius:50%; border:1px solid var(--line);
+              background:var(--card); font-size:18px; line-height:1; cursor:pointer;
+              box-shadow:0 2px 8px rgba(0,0,0,.14); display:flex; align-items:center; justify-content:center;
+              transition:transform .12s;}
+  .pal-toggle:active{transform:scale(.9);}
+  .pal-list{display:none; flex-direction:column; gap:10px; background:var(--card);
+            border:1px solid var(--line); border-radius:999px; padding:11px 9px;
+            box-shadow:0 4px 14px rgba(0,0,0,.16);}
+  .palette.open .pal-list{display:flex;}
+  .sw{width:28px; height:28px; border-radius:50%; border:2px solid var(--card);
       box-shadow:0 0 0 1px var(--line); cursor:pointer; padding:0; transition:transform .1s;}
   .sw:active{transform:scale(.88);}
   .sw.sel{box-shadow:0 0 0 2px var(--ink);}
+
+  /* 未來預約區（歷程頁上方） */
+  .sec-head{font-size:14px; font-weight:700; color:var(--accent); letter-spacing:1px; margin:4px 2px 11px;}
+  .fut-list{display:flex; flex-direction:column; gap:9px; margin-bottom:24px;}
+  .fut-card{display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--line);
+            border-left:4px solid var(--accent); border-radius:11px; padding:11px 15px;}
+  .fut-date{font-weight:700; font-size:15px; color:var(--ink);}
+  .fut-wd{font-size:13px; color:var(--muted);}
 
   /* 我的歷程頁 */
   .hist-summary{background:var(--card); border:1px solid var(--line); border-radius:12px;
@@ -156,7 +179,7 @@
              border-bottom:11px solid var(--blue); opacity:.55;}
   .tl-item{position:relative; padding-left:46px; margin-bottom:11px; display:flex;}
   .tl-node{position:absolute; left:8px; top:50%; transform:translateY(-50%);
-           width:44px; height:44px; border-radius:50%; background:var(--blue); border:3px solid var(--bg);
+           width:44px; height:44px; border-radius:50%; background:var(--accent); border:3px solid var(--bg);
            display:flex; align-items:center; justify-content:center;
            font-weight:800; font-size:16px; color:#fff; z-index:2; box-shadow:0 1px 3px rgba(0,0,0,.12);}
   .tl-bar{flex:1; min-height:50px; background:var(--tlbar); color:var(--ink); border-radius:11px;
@@ -198,15 +221,18 @@
 
   <div class="tabs" id="tabs" style="display:none;">
     <button class="tbtn active" id="tabBtn1" type="button">📅 預約月曆</button>
-    <button class="tbtn" id="tabBtn2" type="button">📖 我的歷程</button>
+    <button class="tbtn" id="tabBtn2" type="button">📖 歷程 &amp; 未來預約</button>
   </div>
 
-  <div class="themebar" id="themebar" style="display:none;">
-    <span class="theme-label">🎨 配色</span>
-    <button class="sw" type="button" data-theme="" title="莓奉暖" style="background:#D8C3A5"></button>
-    <button class="sw" type="button" data-theme="cool" title="冷靈藍灰" style="background:#9DB2C0"></button>
-    <button class="sw" type="button" data-theme="pink" title="櫻粉嫩" style="background:#E2B6C4"></button>
-    <button class="sw" type="button" data-theme="dark" title="質感深色" style="background:#3A3633"></button>
+  <div class="palette" id="palette" style="display:none;">
+    <button class="pal-toggle" id="palToggle" type="button" aria-label="切換配色">🎨</button>
+    <div class="pal-list" id="palList">
+      <button class="sw" type="button" data-theme="" title="莓奉暖" style="background:#D8C3A5"></button>
+      <button class="sw" type="button" data-theme="cool" title="冷靈藍灰" style="background:#9DB2C0"></button>
+      <button class="sw" type="button" data-theme="lavender" title="霧霾薰衣草" style="background:#B7A6CE"></button>
+      <button class="sw" type="button" data-theme="pink" title="櫻粉嫩" style="background:#E2B6C4"></button>
+      <button class="sw" type="button" data-theme="dark" title="質感深色" style="background:#3A3633"></button>
+    </div>
   </div>
 
   <div id="bookingPage">
@@ -410,13 +436,18 @@ if(WHO_TOKEN){
   document.getElementById('tabs').style.display = '';
   document.getElementById('tabBtn1').addEventListener('click', ()=>switchTab('booking'));
   document.getElementById('tabBtn2').addEventListener('click', ()=>switchTab('history'));
-  // 配色切換（只有專屬連結客人可換；選擇記在 localStorage、下次開維持）
-  const tbar = document.getElementById('themebar');
-  tbar.style.display = '';
+  // 配色切換：右側浮動面板（只有專屬連結客人可換；選擇記在 localStorage、下次開維持）
+  const pal = document.getElementById('palette');
+  const palToggle = document.getElementById('palToggle');
+  pal.style.display = '';
+  palToggle.addEventListener('click', ()=>{
+    const open = pal.classList.toggle('open');
+    palToggle.textContent = open ? '✕' : '🎨';
+  });
   let _savedTheme = '';
   try{ _savedTheme = localStorage.getItem('faceTheme') || ''; }catch(e){}
   applyTheme(_savedTheme);
-  tbar.querySelectorAll('.sw').forEach(b=>{
+  pal.querySelectorAll('.sw').forEach(b=>{
     b.addEventListener('click', ()=>{
       const t = b.dataset.theme || '';
       applyTheme(t);
@@ -463,34 +494,84 @@ function loadHistoryThenRender(){
   s.onerror = ()=>{ el.innerHTML = '<div class="hist-empty">歷程載入失敗，請稍後再試。</div>'; };
   document.head.appendChild(s);
 }
+// 該客人的未來已預約時段（近→遠）：重用月曆的 isMine／clinicForDate，含週日固定那位
+function getFutureAppts(){
+  const today = new Date(); today.setHours(0,0,0,0);
+  const todayIso = ymd(today);
+  const out = [];
+  CONFIG.months.forEach(ms=>{
+    const [y,m] = ms.split('-').map(Number);
+    const dim = new Date(y, m, 0).getDate();
+    for(let day=1; day<=dim; day++){
+      const d = new Date(y, m-1, day);
+      const iso = ymd(d);
+      if(iso < todayIso) continue;
+      if(CONFIG.daysOff.includes(iso)) continue;
+      const wd = d.getDay();
+      const raw = clinicForDate(d);
+      if(!raw) continue;
+      raw.slots.forEach(s=>{
+        if(s.pending) return;
+        if(isMine(iso, s.key, wd)){
+          const early = earlyTimeFor(WHO_TOKEN, wd, s.key);
+          out.push({ date:iso, wd, loc:raw.loc, label: early || s.label });
+        }
+      });
+    }
+  });
+  out.sort((a,b)=> a.date<b.date ? -1 : (a.date>b.date ? 1 : 0));
+  return out;
+}
 function renderHistory(){
   const all = (typeof HISTORY_PUBLIC !== 'undefined') ? HISTORY_PUBLIC : [];
-  const data = all.filter(h => Array.isArray(h.pid) ? h.pid.includes(WHO_TOKEN) : h.pid === WHO_TOKEN)
+  const past = all.filter(h => Array.isArray(h.pid) ? h.pid.includes(WHO_TOKEN) : h.pid === WHO_TOKEN)
                   .sort((a,b)=> a.date<b.date ? 1 : (a.date>b.date ? -1 : 0));
+  const fut = getFutureAppts();
   const el = document.getElementById('historyContent');
-  if(!data.length){
-    el.innerHTML = '<div class="hist-empty">目前尚無歷程紀錄 🌱<br>施作美顏針後，紀錄會出現在這裡。</div>';
+  if(!past.length && !fut.length){
+    el.innerHTML = '<div class="hist-empty">目前尚無紀錄 🌱<br>預約或施作後，這裡會顯示您的未來預約與施作歷程。</div>';
     return;
   }
-  const latest = data[0].date.replace(/-/g,'/');
-  let html = '<div class="hist-summary">您共施作 <b>'+data.length+'</b> 次　·　最近一次 '+latest+'</div><div class="tl">';
-  data.forEach((h,i)=>{
-    const d = new Date(h.date+'T00:00:00');
-    const wd = WD_NAMES[d.getDay()];
-    const dateStr = h.date.replace(/-/g,'/');
-    const locCls = h.loc==='龜山' ? 'gs' : (h.loc==='林口' ? 'lk' : 'off');
-    const slotTxt = h.slot ? ' · '+h.slot : '';
-    const m = (h.note||'').match(/(\d+)/);          // 圓圈內顯示「第幾次」的數字
-    const num = m ? m[1] : String(data.length - i);  // 無註記時以序位回推
-    html += '<div class="tl-item">'
-      + '<div class="tl-node">'+num+'</div>'
-      + '<div class="tl-bar">'
-      +   '<span class="tl-date">'+dateStr+'</span><span class="tl-wd">（'+wd+'）'+slotTxt+'</span>'
-      +   (h.loc ? '<span class="tl-badge '+locCls+'">'+h.loc+'</span>' : '')
-      + '</div>'
-      + '</div>';
-  });
-  html += '</div>';
+  let html = '';
+  if(past.length){
+    const latest = past[0].date.replace(/-/g,'/');
+    html += '<div class="hist-summary">您共施作 <b>'+past.length+'</b> 次　·　最近一次 '+latest+'</div>';
+  }
+  // 未來預約
+  if(fut.length){
+    html += '<div class="sec-head">📅 接下來的預約（'+fut.length+'）</div><div class="fut-list">';
+    fut.forEach(f=>{
+      const dateStr = f.date.replace(/-/g,'/');
+      const wd = WD_NAMES[f.wd];
+      const locCls = f.loc==='龜山' ? 'gs' : 'lk';
+      html += '<div class="fut-card">'
+        + '<span class="fut-date">'+dateStr+'</span><span class="fut-wd">（'+wd+'）· '+f.label+'</span>'
+        + '<span class="tl-badge '+locCls+'">'+f.loc+'</span>'
+        + '</div>';
+    });
+    html += '</div>';
+  }
+  // 施作歷程
+  if(past.length){
+    html += '<div class="sec-head">✨ 施作歷程</div><div class="tl">';
+    past.forEach((h,i)=>{
+      const d = new Date(h.date+'T00:00:00');
+      const wd = WD_NAMES[d.getDay()];
+      const dateStr = h.date.replace(/-/g,'/');
+      const locCls = h.loc==='龜山' ? 'gs' : (h.loc==='林口' ? 'lk' : 'off');
+      const slotTxt = h.slot ? ' · '+h.slot : '';
+      const m = (h.note||'').match(/(\d+)/);          // 圓圈內顯示「第幾次」的數字
+      const num = m ? m[1] : String(past.length - i);  // 無註記時以序位回推
+      html += '<div class="tl-item">'
+        + '<div class="tl-node">'+num+'</div>'
+        + '<div class="tl-bar">'
+        +   '<span class="tl-date">'+dateStr+'</span><span class="tl-wd">（'+wd+'）'+slotTxt+'</span>'
+        +   (h.loc ? '<span class="tl-badge '+locCls+'">'+h.loc+'</span>' : '')
+        + '</div>'
+        + '</div>';
+    });
+    html += '</div>';
+  }
   el.innerHTML = html;
 }
 
