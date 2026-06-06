@@ -37,7 +37,6 @@ const CONFIG = {
     { date:'2026-05-17', slot:'13:55' },
     { date:'2026-05-30', slot:'09:00', note:'母女綁定 2 位' },
     { date:'2026-05-31', slot:'13:55' },
-    { date:'2026-06-04', slot:'17:15', who:'YYS' },
     { date:'2026-06-07', slot:'13:55', who:'LMY' },
     { date:'2026-06-08', slot:'13:55', who:'sabrina' },
     { date:'2026-06-14', slot:'13:55', who:'LSS' },

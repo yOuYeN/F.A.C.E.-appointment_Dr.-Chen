@@ -280,7 +280,7 @@
 <div id="toast"></div>
 
 <!-- 預約資料與排程設定抽到共用檔（公開、無姓名）；本機後台 admin.html 也讀同一份 -->
-<script src="config.js?v=7"></script>
+<script src="config.js?v=8"></script>
 <script>
 /* 設定請改 config.js（以下為渲染邏輯，免改） */
 const WHO_TOKEN = new URLSearchParams(location.search).get('who')||'';
@@ -489,7 +489,7 @@ function loadHistoryThenRender(){
   const el = document.getElementById('historyContent');
   el.innerHTML = '<div class="hist-empty">載入中…</div>';
   const s = document.createElement('script');
-  s.src = 'history-public.js?v=1';
+  s.src = 'history-public.js?v=2';
   s.onload = ()=>{ _histLoaded = true; renderHistory(); };
   s.onerror = ()=>{ el.innerHTML = '<div class="hist-empty">歷程載入失敗，請稍後再試。</div>'; };
   document.head.appendChild(s);
