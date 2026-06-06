@@ -16,7 +16,7 @@
     --tlbar:#DCE4EA;    /* 歷程時間軸橫條底 */
     --navbg:rgba(237,232,225,.92);  /* 月份 sticky 列底 */
     --blank:#F4F0EA;    /* 無診空格 */ --offbg:#F0EBE4;  /* 休診格 */
-    --accent:#84739E;   /* 主強調色（選中 Tab／月份／今天框／歷程圓圈）＝莫蘭迪紫，異於已約紫 */
+    --accent:#9E8398;   /* 主強調色（選中 Tab／月份／今天框／歷程圓圈）＝暖莫蘭迪紫，異於已約紫，和暖底協調 */
   }
   /* ── 主題（只有 ?who= 客人可切換；語意色 可約/已約/院區 各主題皆保留辨識度）── */
   body[data-theme="cool"]{   /* 冷靈藍灰 */
@@ -34,8 +34,8 @@
   }
   body[data-theme="dark"]{   /* 質感深色 */
     --bg:#2E2B29; --card:#3A3633; --ink:#ECE6DF; --muted:#A89E94;
-    --blue:#8FA9B4; --line:#4A453F; --tlbar:#454F46; --navbg:rgba(46,43,41,.92);
-    --blank:#332F2C; --offbg:#2F2B28; --accent:#9E8CB6;
+    --blue:#8FA9B4; --line:#4A453F; --tlbar:#46413C; --navbg:rgba(46,43,41,.92);
+    --blank:#332F2C; --offbg:#2F2B28; --accent:#AE94A6;
   }
   *{box-sizing:border-box;}
   body{
@@ -225,7 +225,7 @@
   </div>
 
   <div class="palette" id="palette" style="display:none;">
-    <button class="pal-toggle" id="palToggle" type="button" aria-label="切換配色">🎨</button>
+    <button class="pal-toggle" id="palToggle" type="button" aria-label="切換配色">🖌️</button>
     <div class="pal-list" id="palList">
       <button class="sw" type="button" data-theme="" title="莓奉暖" style="background:#D8C3A5"></button>
       <button class="sw" type="button" data-theme="cool" title="冷靈藍灰" style="background:#9DB2C0"></button>
@@ -442,7 +442,7 @@ if(WHO_TOKEN){
   pal.style.display = '';
   palToggle.addEventListener('click', ()=>{
     const open = pal.classList.toggle('open');
-    palToggle.textContent = open ? '✕' : '🎨';
+    palToggle.textContent = open ? '✕' : '🖌️';
   });
   let _savedTheme = '';
   try{ _savedTheme = localStorage.getItem('faceTheme') || ''; }catch(e){}
