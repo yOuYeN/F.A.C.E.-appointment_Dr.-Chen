@@ -105,6 +105,30 @@
   .view-only .chip.free:hover, .view-only .chip.mine:hover{filter:none;}
   .view-only .chip.free:active, .view-only .chip.mine:active{transform:none;}
 
+  /* Tab 列（只在帶 ?who= 時顯示） */
+  .tabs{display:flex; gap:8px; justify-content:center; margin:4px 0 14px;}
+  .tbtn{border:1px solid var(--line); background:var(--card); color:var(--ink);
+        font:inherit; font-weight:600; font-size:15px; padding:8px 22px; border-radius:999px;
+        cursor:pointer; transition:background .15s, color .15s; letter-spacing:.5px;}
+  .tbtn:active{transform:scale(.96);}
+  .tbtn.active{background:var(--sage); color:#fff; border-color:var(--sage);}
+
+  /* 我的歷程頁 */
+  .hist-summary{background:var(--card); border:1px solid var(--line); border-radius:12px;
+                padding:13px 16px; margin:0 0 14px; font-size:14px; color:var(--ink); text-align:center;}
+  .hist-summary b{color:var(--sage); font-size:17px;}
+  .hist-list{display:flex; flex-direction:column; gap:9px;}
+  .hist-card{display:flex; align-items:center; gap:12px; background:var(--card);
+             border:1px solid var(--line); border-radius:12px; padding:12px 15px;}
+  .hist-date{font-weight:700; font-size:15px; color:var(--ink);}
+  .hist-wd{color:var(--muted); font-weight:500; font-size:13px;}
+  .hist-note{font-size:13px; color:var(--muted); margin-top:2px;}
+  .hist-badge{margin-left:auto; flex-shrink:0; font-size:12px; font-weight:700; color:#fff;
+              padding:3px 11px; border-radius:7px; letter-spacing:1px;}
+  .hist-badge.gs{background:var(--sage);} .hist-badge.lk{background:var(--clay);}
+  .hist-badge.off{background:#9479A6;}
+  .hist-empty{text-align:center; color:var(--muted); font-size:14px; padding:46px 12px; line-height:1.9;}
+
   #toast{
     position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(12px);
     background:#4A4540; color:#fff; font-size:13px; padding:10px 16px; border-radius:10px;
@@ -132,6 +156,12 @@
     <p class="sub">施作 + 留針約 <b>1 小時</b>　·　請參考下方月曆挑選空檔</p>
   </header>
 
+  <div class="tabs" id="tabs" style="display:none;">
+    <button class="tbtn active" id="tabBtn1" type="button">📅 預約月曆</button>
+    <button class="tbtn" id="tabBtn2" type="button">📖 我的歷程</button>
+  </div>
+
+  <div id="bookingPage">
   <nav id="monthNav" class="monthnav" aria-label="月份快速跳轉"></nav>
 
   <div class="panel">
@@ -160,6 +190,11 @@
         <a href="https://youyen.github.io/F.A.C.E.-appointment_Dr.-Chen/" class="sharebtn alt">美顏針公用預約連結 ›</a>
       </p>
     </div>
+  </div>
+  </div><!-- /#bookingPage -->
+
+  <div id="historyPage" style="display:none;">
+    <div id="historyContent"></div>
   </div>
 
   <footer>畫面僅供查看當前空檔，實際預約以官方 LINE 確認為準。</footer>
@@ -319,6 +354,10 @@ if(WHO_TOKEN){
   k.className='key';
   k.innerHTML='<span class="swatch m"></span>您的預約';
   leg.insertBefore(k,leg.children[1]);
+  // 顯示 Tab 列並綁定切換（「我的歷程」只有專屬連結 ?who= 看得到）
+  document.getElementById('tabs').style.display = '';
+  document.getElementById('tabBtn1').addEventListener('click', ()=>switchTab('booking'));
+  document.getElementById('tabBtn2').addEventListener('click', ()=>switchTab('history'));
   if((CONFIG.staffWho||[]).includes(WHO_TOKEN)){
     // 員工精簡頁：只留月曆，隱藏說明/預約方式/底部分享/頁尾；並設為純檢視（時段不可點）
     document.querySelectorAll('.panel .note, .panel .contact, .share, footer').forEach(el=>el.remove());
@@ -328,6 +367,57 @@ if(WHO_TOKEN){
     document.getElementById('faceShare').style.display = '';
   }
 }
+
+/* ---- 我的歷程 Tab（資料 history-public.js 去姓名，首次切過去才載入） ---- */
+let _histLoaded = false;
+function switchTab(tab){
+  const isHist = tab === 'history';
+  document.getElementById('bookingPage').style.display = isHist ? 'none' : '';
+  document.getElementById('historyPage').style.display = isHist ? '' : 'none';
+  document.getElementById('tabBtn1').classList.toggle('active', !isHist);
+  document.getElementById('tabBtn2').classList.toggle('active', isHist);
+  window.scrollTo(0,0);
+  if(isHist) loadHistoryThenRender();
+}
+function loadHistoryThenRender(){
+  if(_histLoaded){ renderHistory(); return; }
+  const el = document.getElementById('historyContent');
+  el.innerHTML = '<div class="hist-empty">載入中…</div>';
+  const s = document.createElement('script');
+  s.src = 'history-public.js?v=1';
+  s.onload = ()=>{ _histLoaded = true; renderHistory(); };
+  s.onerror = ()=>{ el.innerHTML = '<div class="hist-empty">歷程載入失敗，請稍後再試。</div>'; };
+  document.head.appendChild(s);
+}
+function renderHistory(){
+  const all = (typeof HISTORY_PUBLIC !== 'undefined') ? HISTORY_PUBLIC : [];
+  const data = all.filter(h => Array.isArray(h.pid) ? h.pid.includes(WHO_TOKEN) : h.pid === WHO_TOKEN)
+                  .sort((a,b)=> a.date<b.date ? 1 : (a.date>b.date ? -1 : 0));
+  const el = document.getElementById('historyContent');
+  if(!data.length){
+    el.innerHTML = '<div class="hist-empty">目前尚無歷程紀錄 🌱<br>施作美顏針後，紀錄會出現在這裡。</div>';
+    return;
+  }
+  const latest = data[0].date.replace(/-/g,'/');
+  let html = '<div class="hist-summary">您共施作 <b>'+data.length+'</b> 次　·　最近一次 '+latest+'</div><div class="hist-list">';
+  data.forEach(h=>{
+    const d = new Date(h.date+'T00:00:00');
+    const wd = WD_NAMES[d.getDay()];
+    const dateStr = h.date.replace(/-/g,'/');
+    const locCls = h.loc==='龜山' ? 'gs' : (h.loc==='林口' ? 'lk' : 'off');
+    const slotTxt = h.slot ? ' · '+h.slot : '';
+    html += '<div class="hist-card"><div>'
+      + '<span class="hist-date">'+dateStr+'</span> <span class="hist-wd">（'+wd+'）'+slotTxt+'</span>'
+      + (h.note ? '<div class="hist-note">'+h.note+'</div>' : '')
+      + '</div>'
+      + (h.loc ? '<span class="hist-badge '+locCls+'">'+h.loc+'</span>' : '')
+      + '</div>';
+  });
+  html += '</div>';
+  el.innerHTML = html;
+}
+// 深連結：?who=PID#history 直接開歷程頁（放在函式與 _histLoaded 宣告之後，避開 TDZ）
+if(WHO_TOKEN && location.hash === '#history') switchTab('history');
 
 /* ---- 月份快速跳轉 ---- */
 (function(){

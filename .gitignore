@@ -4,6 +4,8 @@ admin.html
 names.local.js
 # 本機歷史名單（病人個資）— 絕不上傳 GitHub
 history.local.js
+# 本機產生腳本（讀 history.local.js／可能含 name→pid 對照）— 絕不上傳 GitHub
+tools/
 # 本機統計頁（含病人姓名）— 絕不上傳 GitHub
 *.local.html
 # 本機開啟捷徑
