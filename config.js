@@ -25,7 +25,7 @@ const CONFIG = {
   sundayMorningWho: 'XMR',   // 該患者的個人連結代碼（非姓名）
   sundayMorningFixedEndDate: '2026-07-31',  // 此日(含)後週日 11:00 不再固定（改為可約或依需求另訂）
   // 該固定病人「沒來」的週日 → 當天 11:00 改為開放可約（事後刪除用）：YYYY-MM-DD
-  sundayMorningSkip: ['2026-05-10', '2026-05-24'],
+  sundayMorningSkip: ['2026-05-10', '2026-05-24', '2026-06-07', '2026-06-28'],
 
   // ★ 週六早上「待定」月份（顯示灰底不開放，等月初公告後再補入 saturdayMorningDates）
   saturdayMorningPendingMonths: ['2026-08'],
@@ -34,7 +34,6 @@ const CONFIG = {
   //   時段代碼：'09:00'(週五早上/週六早上) '13:55'(下午) '17:15'(晚上)
   //            '11:00'(週日早上) '13:55'(週日下午)
   bookings: [
-    { date:'2026-06-07', slot:'13:55', who:'LMY' },
     { date:'2026-06-08', slot:'13:55', who:'sabrina' },
     { date:'2026-06-14', slot:'13:55', who:'LSS' },
     { date:'2026-06-21', slot:'13:55', who:'LMY' },
