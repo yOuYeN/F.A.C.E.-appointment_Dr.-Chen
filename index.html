@@ -125,6 +125,7 @@
   .chip.mine{background:var(--mine); cursor:pointer; transition:filter .08s;}
   .chip.mine:hover{filter:brightness(1.08);}
   .chip.pending{background:var(--muted); cursor:default; opacity:.7; font-style:italic;}
+  .chip.closed{background:var(--muted); cursor:default; opacity:.65;}
 
   /* 純檢視（員工精簡頁）：時段只能看、不可點，移除手勢與互動效果 */
   .view-only .chip.free, .view-only .chip.mine{cursor:default;}
@@ -398,6 +399,10 @@ function buildMonth(monthStr){
           inner += '<span class="chip pending">待定</span>';
           return;
         }
+        if(isPast || isToday){
+          inner += '<span class="chip closed">'+s.label+'</span>';
+          return;
+        }
         const mine = isMine(iso,s.key,wd);
         const booked = !mine&&isBooked(iso,s.key,wd);
         if(mine){
@@ -629,6 +634,8 @@ function fallbackCopy(t){
 }
 document.getElementById('calendar').addEventListener('click', function(e){
   if(document.body.classList.contains('view-only')) return;   // 員工精簡頁：純檢視，不複製預約/取消訊息
+  const cell = e.target.closest('.cell');
+  if(cell && (cell.classList.contains('past') || cell.classList.contains('today'))) return;
   const mineChip = e.target.closest('.chip.mine');
   if(mineChip){
     const cancel = mineChip.getAttribute('data-cancel');
