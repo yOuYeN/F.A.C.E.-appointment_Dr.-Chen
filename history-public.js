@@ -9,6 +9,7 @@ const HISTORY_PUBLIC = [
   {"pid":"LSS","date":"2026-06-14","loc":"林口","slot":"13:55","note":"第5次"},
   {"pid":"LYX","date":"2026-06-14","loc":"林口","slot":"16:00","note":"第1次"},
   {"pid":"LYF","date":"2026-06-14","loc":"林口","slot":"16:50","note":"第1次"},
+  {"pid":"JPY","date":"2026-06-13","loc":"非診所","note":"第7次"},
   {"pid":"sabrina","date":"2026-06-08","loc":"龜山","slot":"13:55","note":"第2次"},
   {"pid":"LMY","date":"2026-06-07","loc":"林口","slot":"13:55","note":"第2次"},
   {"pid":"YYS","date":"2026-06-04","loc":"龜山","slot":"17:15","note":"第2次"},
