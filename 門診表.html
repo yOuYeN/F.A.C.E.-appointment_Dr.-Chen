@@ -25,9 +25,9 @@
   body{
     margin:0; background:var(--bg); color:var(--ink);
     font-family:-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
-    line-height:1.55; padding:26px 14px 56px;
+    line-height:1.55; padding:26px 12px 56px;
   }
-  .wrap{max-width:880px; margin:0 auto;}
+  .wrap{max-width:1050px; margin:0 auto;}
 
   header.top{text-align:center; margin-bottom:24px;}
   header.top .clinic{color:var(--head-d); font-weight:700; letter-spacing:3px; font-size:15.5px;}
@@ -129,7 +129,11 @@
   .sess.lk{background:var(--clay-bg); color:#7a4f44;}
   .sess .b{font-weight:700; margin-right:3px;}
   .sess .lcm{background:var(--gold); color:#fff; border-radius:3px; padding:0 5px; font-size:11px; margin-left:4px; vertical-align:1px;}
-  .sess .rpt{display:block; color:#111; font-weight:700; font-size:13px; margin-top:2px;}
+  .sess .rpt{display:block; color:#111; font-weight:700; font-size:13px; margin-top:2px; white-space:nowrap;}
+  .sess .rpt .ba{display:inline-flex; align-items:center; justify-content:center;
+                 width:1.55em; height:1.55em; background:var(--head-d); color:#fff; font-weight:800;
+                 border-radius:50%; margin:0 3px; font-size:.92em; vertical-align:middle;
+                 position:relative; top:-.08em;}
   .p2legend{display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin:0 0 18px; font-size:15px; color:#5a534c;}
   .p2legend .dot{display:inline-block; width:14px; height:14px; border-radius:4px; vertical-align:-1px; margin-right:6px;}
   .p2legend .dot.gs{background:var(--sage);} .p2legend .dot.lk{background:var(--clay);} .p2legend .dot.rt{background:var(--gold);}
@@ -215,7 +219,7 @@
     </table>
     <div class="seg-foot">
       <span><b>本月週六開診日</b>：7/11、7/18</span>
-      <span><b>休診</b>：7/4、7/25 ～ 7/29</span>
+      <span><b>休診</b>：7/4、7/25 ～ 7/27</span>
     </div>
   </section>
 
@@ -400,7 +404,7 @@
       const cls = s.loc==='林口' ? 'lk' : 'gs';
       inner += '<div class="sess '+cls+'"><span class="b">'+s.band[0]+'</span>'+s.loc
             + (s.locum ? ' <span class="lcm">代</span>' : '')
-            + (s.note ? '<span class="rpt">'+s.note+'</span>' : '') + '</div>';
+            + (s.note ? '<span class="rpt">'+s.note.replace(/(前|後)報到/,'<span class="ba">$1</span>報到')+'</span>' : '') + '</div>';
     });
     return '<div class="cal-day'+extra+'">'+inner+'</div>';
   }
