@@ -28,7 +28,7 @@ const CONFIG = {
   sundayMorningSkip: ['2026-05-10', '2026-05-24', '2026-06-07', '2026-06-28'],
 
   // ★ 週六早上「待定」月份（顯示灰底不開放，等月初公告後再補入 saturdayMorningDates）
-  saturdayMorningPendingMonths: ['2026-08'],
+  saturdayMorningPendingMonths: ['2026-08', '2026-09'],
 
   // ★ 已預約時段：date=YYYY-MM-DD，slot=該日時段代碼，note 可留空（note 為公開、勿寫真實姓名）
   //   時段代碼：'09:00'(週五早上/週六早上) '13:55'(下午) '17:15'(晚上)
