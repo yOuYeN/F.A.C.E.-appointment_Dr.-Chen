@@ -1,0 +1,43 @@
+#!/bin/bash
+# 兩件事：(1) 病人姓名防漏掃描  (2) 防忘 bump ?v=（LINE WebView 強快取踩過兩次的雷）
+set -u
+ROOT="$(git rev-parse --show-toplevel)"
+
+# ---------- (1) 隱私：掃描 staged 內容 ----------
+python3 "$ROOT/.githooks/privacy_scan.py" staged || exit 1
+
+# ---------- (2) 快取版本號 ----------
+# config.js / history-public.js / schedule-core.js 有 staged 異動時，檢查引用頁的 ?v= 有沒有跟著動——
+#   引用頁工作區乾淨 → 自動 bump ＋ git add，放行；
+#   引用頁有未 staged 修改（如改版 WIP）→ 擋下 commit 並印修法（絕不自動 add，避免掃進無關變更）。
+fail=0
+autodone=""
+
+bump_or_block(){
+  local dep="$1" ref="$2"
+  git diff --cached --quiet -- "$dep" && return 0        # dep 沒 staged 異動
+  git cat-file -e "HEAD:$dep" 2>/dev/null || return 0    # dep 是首次加入，不強制
+  local old new
+  old=$(git show "HEAD:$ref" 2>/dev/null | grep -o "${dep}?v=[0-9]*" | sort -u)
+  new=$(git show ":$ref"     2>/dev/null | grep -o "${dep}?v=[0-9]*" | sort -u)
+  [ -z "$old" ] && return 0                              # 引用頁沒引用該檔
+  if [ "$old" = "$new" ]; then
+    if git diff --quiet -- "$ref"; then
+      perl -pi -e "s/\Q${dep}\E\?v=(\d+)/\"${dep}?v=\".(\$1+1)/ge" "$ref"
+      git add "$ref"
+      autodone="${autodone}  ✅ 已自動 bump ${ref} 的 ${dep}?v=（$(grep -o "${dep}?v=[0-9]*" "$ref" | sort -u | tr '\n' ' ')）\n"
+    else
+      echo "❌ ${dep} 有異動，但 ${ref} 的 ${dep}?v= 沒 bump；且 ${ref} 有未 staged 修改，不自動改（避免掃進無關變更）。"
+      echo "   修法：跑 tools/bump-v.sh ${dep} 後，用 git add -p ${ref} 只加 ?v= 那行，再重新 commit。"
+      fail=1
+    fi
+  fi
+}
+
+bump_or_block "config.js"         "index.html"
+bump_or_block "config.js"         "門診表.html"
+bump_or_block "history-public.js" "index.html"
+bump_or_block "schedule-core.js"  "index.html"
+
+[ -n "$autodone" ] && printf "%b" "$autodone"
+exit $fail

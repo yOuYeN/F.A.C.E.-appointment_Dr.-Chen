@@ -1,0 +1,6 @@
+#!/bin/bash
+# commit 訊息也是公開的（repo 公開時任何人未登入都讀得到）。
+# pre-commit 看不到訊息，所以必須另外用 commit-msg 這道。
+set -u
+ROOT="$(git rev-parse --show-toplevel)"
+exec python3 "$ROOT/.githooks/privacy_scan.py" msg "$1"
