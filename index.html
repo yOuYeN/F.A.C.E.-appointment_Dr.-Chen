@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>陳由晏醫師 ｜ 美顏針 ｜ 可預約時間</title>
+<style>
+  :root{
+    --bg:#EDE8E1; --card:#FBF9F6; --ink:#4A4540; --muted:#9A938B;
+    --mine:#C4A05A;     /* 莫蘭迪金＝您的預約 */
+    --purple:#A292A8;   /* 莫蘭迪紫＝已約 */
+    --blue:#8FA9B4;     /* 莫蘭迪藍＝可約 */
+    --sage:#9AAB97;     /* 龜山（語意色，不隨主題變） */
+    --clay:#C2A29A;     /* 林口（語意色，不隨主題變） */
+    --line:#E3DCD2;
+    --tlbar:#E7DBCB;    /* 歷程時間軸橫條底（暖沙色，和暖底協調；勿用藍） */
+    --navbg:rgba(237,232,225,.92);  /* 月份 sticky 列底 */
+    --blank:#F4F0EA;    /* 無診空格 */ --offbg:#F0EBE4;  /* 休診格 */
+    --accent:#A8888F;   /* 主強調色（選中 Tab／月份／今天框／歷程圓圈）＝暖莫蘭迪玫瑰紫，異於已約紫，和暖底協調 */
+  }
+  /* ── 主題（只有 ?who= 客人可切換；語意色 可約/已約/院區 各主題皆保留辨識度）── */
+  body[data-theme="cool"]{   /* 冷靈藍灰 */
+    --bg:#E6EAED; --card:#F6F9FB; --ink:#3D4A50; --muted:#869298;
+    --blue:#7C97AB; --line:#D8E1E5; --tlbar:#D5DFE6; --navbg:rgba(230,234,237,.92); --accent:#7E86AC;
+  }
+  body[data-theme="pink"]{   /* 櫻粉嫩 */
+    --bg:#F4E8EA; --card:#FCF6F7; --ink:#574247; --muted:#AE96A0;
+    --line:#EBDBDF; --tlbar:#EAD9E0; --navbg:rgba(244,232,234,.92); --accent:#AE7BA0;
+  }
+  body[data-theme="lavender"]{ /* 霧霾薰衣草（第 5 色） */
+    --bg:#EBE7F0; --card:#F8F6FC; --ink:#4B4556; --muted:#988FA6;
+    --line:#E2DBEC; --tlbar:#E4DCF1; --navbg:rgba(235,231,240,.92);
+    --blank:#F0ECF6; --offbg:#ECE7F4; --accent:#826FA0;
+  }
+  body[data-theme="dark"]{   /* 質感深色 */
+    --bg:#2E2B29; --card:#3A3633; --ink:#ECE6DF; --muted:#A89E94;
+    --blue:#8FA9B4; --line:#4A453F; --tlbar:#46413C; --navbg:rgba(46,43,41,.92);
+    --blank:#332F2C; --offbg:#2F2B28; --accent:#AE94A6;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    line-height:1.5; padding:18px 12px 60px;
+  }
+  .wrap{max-width:760px; margin:0 auto;}
+  header{text-align:center; margin-bottom:14px;}
+  h1{font-size:22px; margin:0 0 4px; letter-spacing:1px;}
+  .sub{color:var(--muted); font-size:13px; margin:0;}
+
+  .panel{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:12px 14px; margin:12px 0;
+  }
+  .legend{display:flex; flex-wrap:wrap; gap:10px 14px; align-items:center; justify-content:space-between; font-size:13px;}
+  .legend-grp{display:flex; flex-wrap:wrap; gap:10px 14px; align-items:center;}
+  .legend-loc{padding-left:15px; border-left:1px solid var(--line);}
+  @media(max-width:560px){ .legend-loc{border-left:none; padding-left:0;} }
+  .key{display:inline-flex; align-items:center; gap:6px;}
+  .swatch{width:16px; height:16px; border-radius:5px; display:inline-block;}
+  .swatch.p{background:var(--purple);}
+  .swatch.b{background:var(--blue);}
+  .swatch.g{background:var(--sage);}
+  .swatch.c{background:var(--clay);}
+  .swatch.m{background:var(--mine);}
+  .swatch.n{background:var(--muted);}
+  .note{font-size:13px; color:var(--muted); margin-top:8px;}
+  .contact{font-size:14px; margin-top:8px; padding-top:8px; border-top:1px dashed var(--line);}
+  .contact b{color:var(--ink);}
+  .share{max-width:560px; margin:26px auto 6px;}
+  .share-desc{font-size:13px; color:var(--muted); text-align:center; line-height:1.6; margin:20px 0 9px;}
+  .share-desc b{color:var(--ink);}
+  .sharebtn{display:inline-block; text-decoration:none; font-weight:600; color:#fff; background:var(--sage); padding:11px 26px; border-radius:999px;}
+  .sharebtn.alt{background:var(--blue);}
+
+  .monthnav{
+    position:sticky; top:0; z-index:20;
+    display:flex; gap:8px; justify-content:center; flex-wrap:wrap;
+    padding:10px 6px 8px; margin:0 -12px 6px;
+    background:var(--navbg);
+    backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+  }
+  .mbtn{
+    border:1px solid var(--line); background:var(--card); color:var(--ink);
+    font:inherit; font-size:14px; font-weight:600; padding:7px 16px; border-radius:999px;
+    cursor:pointer; transition:filter .15s, transform .08s, background .15s, color .15s;
+  }
+  .mbtn:active{transform:scale(.95);}
+  .mbtn.active{background:var(--accent); color:#fff; border-color:var(--accent);}
+
+  .month{margin:18px 0; scroll-margin-top:64px;}
+  .month h2{font-size:16px; margin:0 0 8px; padding-left:4px;}
+  .grid{display:grid; grid-template-columns:repeat(7,1fr); gap:5px;}
+  .dow{text-align:center; font-size:12px; color:var(--muted); padding:4px 0; font-weight:600;}
+  .dow.sun,.dow.sat{color:#B58F86;}
+  .cell{
+    background:var(--card); border:1px solid var(--line); border-radius:10px;
+    min-height:64px; padding:4px 4px 5px; position:relative; overflow:hidden;
+  }
+  .cell.empty{background:transparent; border-color:transparent; min-height:0;}
+  .cell.blank{background:var(--blank); border-style:dashed; opacity:.65;}
+  .cell.off{background:var(--offbg); border-style:dashed;}
+  .cell.past{opacity:.38;}
+  .cell.today{outline:2px solid var(--accent); outline-offset:-2px;}
+  .daynum{font-size:12px; font-weight:700; color:var(--ink);}
+  .loc{
+    float:right; font-size:10px; color:#fff; border-radius:5px;
+    padding:0 5px; line-height:16px; font-weight:700;
+  }
+  .loc.gs{background:var(--sage);}
+  .loc.lk{background:var(--clay);}
+  .offtag{
+    margin-top:8px; text-align:center; font-size:11px; color:var(--muted);
+    font-weight:700; letter-spacing:2px;
+  }
+  .chips{display:flex; flex-direction:column; gap:3px; margin-top:4px;}
+  .chip{
+    font-size:11px; color:#fff; border-radius:6px; padding:2px 5px;
+    text-align:center; white-space:nowrap; font-weight:600; letter-spacing:.3px;
+  }
+  .chip.free{background:var(--blue); cursor:pointer; transition:transform .08s, filter .08s;}
+  .chip.free:hover{filter:brightness(1.06);}
+  .chip.free:active{transform:scale(.94);}
+  .chip.busy{background:var(--purple); text-decoration:line-through; text-decoration-thickness:1px; opacity:.92;}
+  .chip.mine{background:var(--mine); cursor:pointer; transition:filter .08s;}
+  .chip.mine:hover{filter:brightness(1.08);}
+  .chip.pending{background:var(--muted); cursor:default; opacity:.7; font-style:italic;}
+  .chip.closed{background:var(--ink); cursor:default; opacity:.72;}
+
+  /* 純檢視（員工精簡頁）：時段只能看、不可點，移除手勢與互動效果 */
+  .view-only .chip.free, .view-only .chip.mine{cursor:default;}
+  .view-only .chip.free:hover, .view-only .chip.mine:hover{filter:none;}
+  .view-only .chip.free:active, .view-only .chip.mine:active{transform:none;}
+
+  /* Tab 列（只在帶 ?who= 時顯示） */
+  .tabs{display:flex; gap:8px; justify-content:center; margin:4px 0 14px;}
+  .tbtn{border:1px solid var(--line); background:var(--card); color:var(--ink);
+        font:inherit; font-weight:600; font-size:15px; padding:8px 22px; border-radius:999px;
+        cursor:pointer; transition:background .15s, color .15s; letter-spacing:.5px;}
+  .tbtn:active{transform:scale(.96);}
+  .tbtn.active{background:var(--accent); color:#fff; border-color:var(--accent);}
+
+  /* 配色切換：右側可收合浮動面板（只在帶 ?who= 時顯示） */
+  .palette{position:fixed; top:70px; right:12px; z-index:60;
+           display:flex; flex-direction:column; align-items:center; gap:9px;}
+  .pal-toggle{width:40px; height:40px; border-radius:50%; border:1px solid var(--line);
+              background:var(--card); font-size:18px; line-height:1; cursor:pointer;
+              box-shadow:0 2px 8px rgba(0,0,0,.14); display:flex; align-items:center; justify-content:center;
+              transition:transform .12s;}
+  .pal-toggle:active{transform:scale(.9);}
+  .pal-list{display:none; flex-direction:column; gap:10px; background:var(--card);
+            border:1px solid var(--line); border-radius:999px; padding:11px 9px;
+            box-shadow:0 4px 14px rgba(0,0,0,.16);}
+  .palette.open .pal-list{display:flex;}
+  .sw{width:28px; height:28px; border-radius:50%; border:2px solid var(--card);
+      box-shadow:0 0 0 1px var(--line); cursor:pointer; padding:0; transition:transform .1s;}
+  .sw:active{transform:scale(.88);}
+  .sw.sel{box-shadow:0 0 0 2px var(--ink);}
+
+  /* 未來預約區（歷程頁上方） */
+  .sec-head{font-size:14px; font-weight:700; color:var(--accent); letter-spacing:1px; margin:4px 2px 11px;}
+  .fut-list{display:flex; flex-direction:column; gap:9px; margin-bottom:24px;}
+  .fut-card{display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--line);
+            border-left:4px solid var(--accent); border-radius:11px; padding:11px 15px;}
+  .fut-date{font-weight:700; font-size:15px; color:var(--ink);}
+  .fut-wd{font-size:13px; color:var(--muted);}
+
+  /* 我的歷程頁 */
+  .hist-summary{background:var(--card); border:1px solid var(--line); border-radius:12px;
+                padding:13px 16px; margin:0 0 20px; font-size:14px; color:var(--ink); text-align:center;}
+  .hist-summary b{color:var(--blue); font-size:17px;}
+  .hist-empty{text-align:center; color:var(--muted); font-size:14px; padding:46px 12px; line-height:1.9;}
+
+  /* 時間軸（左側圓圈寫次數 + 右側橫條） */
+  .tl{position:relative; padding:6px 0 4px;}
+  .tl::before{content:''; position:absolute; left:29px; top:2px; bottom:8px; width:3px;
+              background:var(--blue); opacity:.4; border-radius:2px;}
+  .tl::after{content:''; position:absolute; left:23px; top:-7px;
+             border-left:7px solid transparent; border-right:7px solid transparent;
+             border-bottom:11px solid var(--blue); opacity:.55;}
+  .tl-item{position:relative; padding-left:46px; margin-bottom:11px; display:flex;}
+  .tl-node{position:absolute; left:8px; top:50%; transform:translateY(-50%);
+           width:44px; height:44px; border-radius:50%; background:var(--accent); border:3px solid var(--bg);
+           display:flex; align-items:center; justify-content:center;
+           font-weight:800; font-size:16px; color:#fff; z-index:2; box-shadow:0 1px 3px rgba(0,0,0,.12);}
+  .tl-bar{flex:1; min-height:50px; background:var(--tlbar); color:var(--ink); border-radius:11px;
+          padding:10px 15px 10px 28px; display:flex; align-items:center; gap:10px;
+          clip-path:polygon(0 0, 100% 0, 100% 100%, 0 100%, 15px 50%);}
+  .tl-date{font-weight:700; font-size:15px; letter-spacing:.5px;}
+  .tl-wd{font-size:13px; color:var(--muted);}
+  .tl-badge{margin-left:auto; flex-shrink:0; font-size:12px; font-weight:700; color:#fff;
+            background:var(--muted); padding:3px 11px; border-radius:7px; letter-spacing:1px;}
+  .tl-badge.gs{background:var(--sage);} .tl-badge.lk{background:var(--clay);}
+  .tl-badge.off{background:#9479A6;}
+
+  #toast{
+    position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(12px);
+    background:#4A4540; color:#fff; font-size:13px; padding:10px 16px; border-radius:10px;
+    max-width:90%; text-align:center; box-shadow:0 6px 18px rgba(0,0,0,.2);
+    opacity:0; pointer-events:none; transition:opacity .2s, transform .2s; z-index:50;
+  }
+  #toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  footer{text-align:center; color:var(--muted); font-size:12px; margin-top:26px;}
+
+  @media (max-width:560px){
+    h1{font-size:19px;}
+    .cell{min-height:58px; padding:3px;}
+    .chip{font-size:10px; padding:2px 3px;}
+    .daynum{font-size:11px;}
+    .loc{font-size:9px; padding:0 4px;}
+    .grid{gap:4px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>陳由晏醫師 ｜ 美顏針 ｜ 可預約時間</h1>
+    <p class="sub">施作 + 留針約 <b>1 小時</b>　·　請參考下方月曆挑選空檔</p>
+  </header>
+
+  <div class="tabs" id="tabs" style="display:none;">
+    <button class="tbtn active" id="tabBtn1" type="button">📅 預約月曆</button>
+    <button class="tbtn" id="tabBtn2" type="button">📖 歷程 &amp; 未來預約</button>
+  </div>
+
+  <div class="palette" id="palette" style="display:none;">
+    <button class="pal-toggle" id="palToggle" type="button" aria-label="切換配色">🖌️</button>
+    <div class="pal-list" id="palList">
+      <button class="sw" type="button" data-theme="" title="莓奉暖" style="background:#D8C3A5"></button>
+      <button class="sw" type="button" data-theme="cool" title="冷靈藍灰" style="background:#9DB2C0"></button>
+      <button class="sw" type="button" data-theme="lavender" title="霧霾薰衣草" style="background:#B7A6CE"></button>
+      <button class="sw" type="button" data-theme="pink" title="櫻粉嫩" style="background:#E2B6C4"></button>
+      <button class="sw" type="button" data-theme="dark" title="質感深色" style="background:#3A3633"></button>
+    </div>
+  </div>
+
+  <div id="bookingPage">
+  <nav id="monthNav" class="monthnav" aria-label="月份快速跳轉"></nav>
+
+  <div class="panel">
+    <div class="legend">
+      <div class="legend-grp legend-status">
+        <span class="key"><span class="swatch b"></span>可預約</span>
+        <span class="key"><span class="swatch p"></span>已約滿</span>
+        <span class="key"><span class="swatch n"></span>待定</span>
+      </div>
+      <div class="legend-grp legend-loc">
+        <span class="key"><span class="swatch g"></span>龜山</span>
+        <span class="key"><span class="swatch c"></span>林口</span>
+      </div>
+    </div>
+    <p class="note">點選藍色 (可預約) 時段，會自動複製預約訊息，再貼到官方 LINE 傳送即可。<span id="cancelNote" style="display:none">點選金色 (★ 您的預約) 時段，可複製取消訊息。</span>週五早上時間彈性 (09:00 - 12:00 內皆可)；<br>週六早上採排班，開診日期於前一個月月初公告 (標示「待定」者表未確定，敬請耐心等候更新)。</p>
+    <p class="contact" style="margin-bottom:0; padding-top:16px; padding-bottom:4px;"><b>預約方式：</b>請私訊陳醫師<b>官方 LINE</b>，把複製好的訊息貼上傳送即可完成預約。</p>
+  </div>
+
+  <div id="calendar"></div>
+
+  <div class="share">
+    <p class="share-desc">若要分享給看「<b>一般門診</b>」（非美顏針）的親友，請使用下方門診時間表連結：</p>
+    <p style="text-align:center; margin:0;">
+      <a href="門診表.html" class="sharebtn">📋 查看完整門診時間表 ›</a>
+    </p>
+
+    <div id="faceShare" style="display:none;">
+      <p class="share-desc">若要分享給想「<b>施作美顏針</b>」的親友，請使用此公用預約連結：</p>
+      <p style="text-align:center; margin:0;">
+        <a href="https://youyen.github.io/F.A.C.E.-appointment_Dr.-Chen/" class="sharebtn alt">美顏針公用預約連結 ›</a>
+      </p>
+    </div>
+  </div>
+  </div><!-- /#bookingPage -->
+
+  <div id="historyPage" style="display:none;">
+    <div id="historyContent"></div>
+  </div>
+
+  <footer>畫面僅供查看當前空檔，實際預約以官方 LINE 確認為準。</footer>
+</div>
+<div id="toast"></div>
+
+<!-- 預約資料與排程設定抽到共用檔（公開、無姓名）；本機後台 admin.html 也讀同一份 -->
+<script src="config.js?v=25"></script>
+<script src="schedule-core.js?v=1"></script><!-- 共用排程邏輯（clinicForDate 等），與 admin/Yanice 共用 -->
+<script>
+/* 設定請改 config.js（以下為渲染邏輯，免改） */
+const WHO_TOKEN = new URLSearchParams(location.search).get('who')||'';
+/* ymd／WD_NAMES／clinicForDate／earlyTimeFor／isBooked 移至共用 schedule-core.js */
+
+function isMine(iso,key,wd){
+  if(!WHO_TOKEN) return false;
+  if(wd===0&&key==='11:00'&&sundayFixedActive(iso)&&CONFIG.sundayMorningWho===WHO_TOKEN) return true;
+  return CONFIG.bookings.some(b=>{
+    if(b.date!==iso||b.slot!==key) return false;
+    return Array.isArray(b.who)?b.who.includes(WHO_TOKEN):b.who===WHO_TOKEN;
+  });
+}
+
+function buildMonth(monthStr){
+  const [y,m] = monthStr.split('-').map(Number);
+  const first = new Date(y, m-1, 1);
+  const daysInMonth = new Date(y, m, 0).getDate();
+  const startWd = first.getDay();
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  const todayIso = ymd(today);
+
+  let html = '<div class="month" id="m-'+monthStr+'"><h2>'+y+' 年 '+m+' 月</h2><div class="grid">';
+  WD_NAMES.forEach((n,i)=>{
+    const cls = i===0?'sun':(i===6?'sat':'');
+    html += '<div class="dow '+cls+'">'+n+'</div>';
+  });
+
+  for(let i=0;i<startWd;i++) html += '<div class="cell empty"></div>';
+
+  for(let day=1; day<=daysInMonth; day++){
+    const d = new Date(y, m-1, day);
+    const iso = ymd(d);
+    const wd = d.getDay();
+    const raw = clinicForDate(d);
+    const off = CONFIG.daysOff.includes(iso);
+    const isPast = iso < todayIso;
+    const isToday = iso === todayIso;
+
+    let cls = 'cell';
+    if(isPast) cls += ' past';
+    if(isToday) cls += ' today';
+
+    let inner = '';
+
+    if(off && raw){                       // 原本有診、但休假 → 休診
+      cls += ' off';
+      inner += '<span class="daynum">'+day+'</span><div class="offtag">休診</div>';
+    } else if(raw){                       // 正常門診日
+      const locCls = raw.loc==='龜山' ? 'gs' : 'lk';
+      inner += '<span class="loc '+locCls+'">'+raw.loc+'</span>';
+      inner += '<span class="daynum">'+day+'</span><div class="chips">';
+      raw.slots.forEach(s=>{
+        if(s.pending){
+          inner += '<span class="chip pending">待定</span>';
+          return;
+        }
+        const mine = isMine(iso,s.key,wd);
+        const booked = !mine&&isBooked(iso,s.key,wd);
+        if(mine){
+          const early = earlyTimeFor(WHO_TOKEN, wd, s.key);
+          const lbl = early || s.label;
+          const cpy = early || s.copy;
+          const cancelMsg = '想取消 '+m+'/'+day+' ('+WD_NAMES[wd]+') '+cpy+' 的預約';
+          const cancelAttr = (isPast || isToday) ? '' : ' data-cancel="'+cancelMsg+'"';
+          inner += '<span class="chip mine"'+cancelAttr+'>★ '+lbl+'</span>';
+        } else if(isPast || isToday){
+          inner += '<span class="chip closed">'+s.label+'</span>';
+        } else if(booked){
+          inner += '<span class="chip busy">'+s.label+'</span>';
+        } else {
+          const msg = '想預約 '+m+'/'+day+' ('+WD_NAMES[wd]+') '+s.copy;
+          inner += '<span class="chip free" data-msg="'+msg+'">'+s.label+'</span>';
+        }
+      });
+      inner += '</div>';
+    } else {                              // 無門診
+      cls += ' blank';
+      inner += '<span class="daynum">'+day+'</span>';
+    }
+    html += '<div class="'+cls+'">'+inner+'</div>';
+  }
+
+  html += '</div></div>';
+  return html;
+}
+
+document.getElementById('calendar').innerHTML = CONFIG.months.map(buildMonth).join('');
+if(WHO_TOKEN){
+  const statusGrp = document.querySelector('.legend-status');
+  const k = document.createElement('span');
+  k.className='key';
+  k.innerHTML='<span class="swatch m"></span>您的預約';
+  statusGrp.insertBefore(k, statusGrp.children[1]);   // 插在「可預約」後、狀態組內
+  // 顯示 Tab 列並綁定切換（「我的歷程」只有專屬連結 ?who= 看得到）
+  document.getElementById('tabs').style.display = '';
+  document.getElementById('tabBtn1').addEventListener('click', ()=>switchTab('booking'));
+  document.getElementById('tabBtn2').addEventListener('click', ()=>switchTab('history'));
+  // 配色切換：右側浮動面板（只有專屬連結客人可換；選擇記在 localStorage、下次開維持）
+  const pal = document.getElementById('palette');
+  const palToggle = document.getElementById('palToggle');
+  pal.style.display = '';
+  palToggle.addEventListener('click', ()=>{
+    const open = pal.classList.toggle('open');
+    palToggle.textContent = open ? '✕' : '🖌️';
+  });
+  let _savedTheme = '';
+  try{ _savedTheme = localStorage.getItem('faceTheme') || ''; }catch(e){}
+  applyTheme(_savedTheme);
+  pal.querySelectorAll('.sw').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const t = b.dataset.theme || '';
+      applyTheme(t);
+      try{ localStorage.setItem('faceTheme', t); }catch(e){}
+    });
+  });
+  if((CONFIG.staffWho||[]).includes(WHO_TOKEN)){
+    // 員工精簡頁：只留月曆，隱藏說明/預約方式/底部分享/頁尾；並設為純檢視（時段不可點）
+    document.querySelectorAll('.panel .note, .panel .contact, .share, footer').forEach(el=>el.remove());
+    document.body.classList.add('view-only');
+  } else {
+    document.getElementById('cancelNote').style.display = '';
+    document.getElementById('faceShare').style.display = '';
+  }
+}
+
+/* ---- 配色主題（套整頁；語意色保留辨識度） ---- */
+function applyTheme(t){
+  if(t) document.body.setAttribute('data-theme', t);
+  else document.body.removeAttribute('data-theme');
+  document.querySelectorAll('.sw').forEach(b=> b.classList.toggle('sel', (b.dataset.theme||'') === (t||'')));
+}
+
+/* ---- 我的歷程 Tab（資料 history-public.js 去姓名，首次切過去才載入） ---- */
+let _histLoaded = false;
+function switchTab(tab){
+  const isHist = tab === 'history';
+  document.getElementById('bookingPage').style.display = isHist ? 'none' : '';
+  document.getElementById('historyPage').style.display = isHist ? '' : 'none';
+  document.getElementById('tabBtn1').classList.toggle('active', !isHist);
+  document.getElementById('tabBtn2').classList.toggle('active', isHist);
+  const ft = document.querySelector('footer');     // 歷程頁不顯示底部「畫面僅供查看…」那行
+  if(ft) ft.style.display = isHist ? 'none' : '';
+  window.scrollTo(0,0);
+  if(isHist) loadHistoryThenRender();
+}
+function loadHistoryThenRender(){
+  if(_histLoaded){ renderHistory(); return; }
+  const el = document.getElementById('historyContent');
+  el.innerHTML = '<div class="hist-empty">載入中…</div>';
+  const s = document.createElement('script');
+  s.src = 'history-public.js?v=17';
+  s.onload = ()=>{ _histLoaded = true; renderHistory(); };
+  s.onerror = ()=>{ el.innerHTML = '<div class="hist-empty">歷程載入失敗，請稍後再試。</div>'; };
+  document.head.appendChild(s);
+}
+// 該客人的未來已預約時段（近→遠）：重用月曆的 isMine／clinicForDate，含週日固定那位
+function getFutureAppts(){
+  const today = new Date(); today.setHours(0,0,0,0);
+  const todayIso = ymd(today);
+  const out = [];
+  CONFIG.months.forEach(ms=>{
+    const [y,m] = ms.split('-').map(Number);
+    const dim = new Date(y, m, 0).getDate();
+    for(let day=1; day<=dim; day++){
+      const d = new Date(y, m-1, day);
+      const iso = ymd(d);
+      if(iso <= todayIso) continue;
+      if(CONFIG.daysOff.includes(iso)) continue;
+      const wd = d.getDay();
+      const raw = clinicForDate(d);
+      if(!raw) continue;
+      raw.slots.forEach(s=>{
+        if(s.pending) return;
+        if(isMine(iso, s.key, wd)){
+          const early = earlyTimeFor(WHO_TOKEN, wd, s.key);
+          out.push({ date:iso, wd, loc:raw.loc, label: early || s.label });
+        }
+      });
+    }
+  });
+  out.sort((a,b)=> a.date<b.date ? -1 : (a.date>b.date ? 1 : 0));
+  return out;
+}
+function renderHistory(){
+  const all = (typeof HISTORY_PUBLIC !== 'undefined') ? HISTORY_PUBLIC : [];
+  const past = all.filter(h => Array.isArray(h.pid) ? h.pid.includes(WHO_TOKEN) : h.pid === WHO_TOKEN)
+                  .sort((a,b)=> a.date<b.date ? 1 : (a.date>b.date ? -1 : 0));
+  const fut = getFutureAppts();
+  const el = document.getElementById('historyContent');
+  if(!past.length && !fut.length){
+    el.innerHTML = '<div class="hist-empty">目前尚無紀錄 🌱<br>預約或施作後，這裡會顯示您的未來預約與施作歷程。</div>';
+    return;
+  }
+  let html = '';
+  if(past.length){
+    const latest = past[0].date.replace(/-/g,'/');
+    html += '<div class="hist-summary">您共施作 <b>'+past.length+'</b> 次　·　最近一次 '+latest+'</div>';
+  }
+  // 未來預約
+  if(fut.length){
+    html += '<div class="sec-head">📅 接下來的預約（'+fut.length+'）</div><div class="fut-list">';
+    fut.forEach(f=>{
+      const dateStr = f.date.replace(/-/g,'/');
+      const wd = WD_NAMES[f.wd];
+      const locCls = f.loc==='龜山' ? 'gs' : 'lk';
+      html += '<div class="fut-card">'
+        + '<span class="fut-date">'+dateStr+'</span><span class="fut-wd">（'+wd+'）· '+f.label+'</span>'
+        + '<span class="tl-badge '+locCls+'">'+f.loc+'</span>'
+        + '</div>';
+    });
+    html += '</div>';
+  }
+  // 施作歷程
+  if(past.length){
+    html += '<div class="sec-head">✨ 施作歷程</div><div class="tl">';
+    past.forEach((h,i)=>{
+      const d = new Date(h.date+'T00:00:00');
+      const wd = WD_NAMES[d.getDay()];
+      const dateStr = h.date.replace(/-/g,'/');
+      const locCls = h.loc==='龜山' ? 'gs' : (h.loc==='林口' ? 'lk' : 'off');
+      const slotTxt = h.slot ? ' · '+h.slot : '';
+      const m = (h.note||'').match(/(\d+)/);          // 圓圈內顯示「第幾次」的數字
+      const num = m ? m[1] : String(past.length - i);  // 無註記時以序位回推
+      html += '<div class="tl-item">'
+        + '<div class="tl-node">'+num+'</div>'
+        + '<div class="tl-bar">'
+        +   '<span class="tl-date">'+dateStr+'</span><span class="tl-wd">（'+wd+'）'+slotTxt+'</span>'
+        +   (h.loc ? '<span class="tl-badge '+locCls+'">'+h.loc+'</span>' : '')
+        + '</div>'
+        + '</div>';
+    });
+    html += '</div>';
+  }
+  el.innerHTML = html;
+}
+
+/* ---- 月份快速跳轉 ---- */
+(function(){
+  const nav = document.getElementById('monthNav');
+  CONFIG.months.forEach(ms=>{
+    const m = Number(ms.split('-')[1]);
+    const b = document.createElement('button');
+    b.className = 'mbtn';
+    b.textContent = m + ' 月';
+    b.dataset.target = 'm-' + ms;
+    b.addEventListener('click', ()=>{
+      const el = document.getElementById('m-' + ms);
+      if(el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+    });
+    nav.appendChild(b);
+  });
+  const btns = Array.from(nav.children);
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(en=>{
+      if(en.isIntersecting){
+        btns.forEach(b=>b.classList.toggle('active', b.dataset.target===en.target.id));
+      }
+    });
+  }, { rootMargin:'-50% 0px -50% 0px', threshold:0 });
+  CONFIG.months.forEach(ms=>{
+    const s = document.getElementById('m-' + ms);
+    if(s) io.observe(s);
+  });
+})();
+
+/* ---- 點擊複製 ---- */
+let toastTimer;
+function showToast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>el.classList.remove('show'), 2600);
+}
+function copyText(t){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(()=>showToast('已複製：'+t+' (貼到官方 LINE 傳送)'), ()=>fallbackCopy(t));
+  } else { fallbackCopy(t); }
+}
+function fallbackCopy(t){
+  const ta = document.createElement('textarea');
+  ta.value = t; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.focus(); ta.select();
+  let ok=false;
+  try{ ok = document.execCommand('copy'); }catch(e){}
+  document.body.removeChild(ta);
+  showToast(ok ? ('已複製：'+t+' (貼到官方 LINE 傳送)') : ('請手動傳送：'+t));
+}
+document.getElementById('calendar').addEventListener('click', function(e){
+  if(document.body.classList.contains('view-only')) return;   // 員工精簡頁：純檢視，不複製預約/取消訊息
+  const cell = e.target.closest('.cell');
+  if(cell && (cell.classList.contains('past') || cell.classList.contains('today'))) return;
+  const mineChip = e.target.closest('.chip.mine');
+  if(mineChip){
+    const cancel = mineChip.getAttribute('data-cancel');
+    if(cancel) copyText(cancel);
+    return;
+  }
+  const chip = e.target.closest('.chip.free');
+  if(!chip) return;
+  copyText(chip.getAttribute('data-msg'));
+});
+</script>
+</body>
+</html>
