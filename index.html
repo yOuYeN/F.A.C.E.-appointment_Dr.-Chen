@@ -17,6 +17,8 @@
     --navbg:rgba(237,232,225,.92);  /* 月份 sticky 列底 */
     --blank:#F4F0EA;    /* 無診空格 */ --offbg:#F0EBE4;  /* 休診格 */
     --accent:#A8888F;   /* 主強調色（選中 Tab／月份／今天框／歷程圓圈）＝暖莫蘭迪玫瑰紫，異於已約紫，和暖底協調 */
+    --gold:#C4A05A;     /* 品牌金（頁首線飾、月份標題點綴） */
+    --serif:"Songti TC","Noto Serif TC",Georgia,serif;  /* 頁首／月份標題明體 */
   }
   /* ── 主題（只有 ?who= 客人可切換；語意色 可約/已約/院區 各主題皆保留辨識度）── */
   body[data-theme="cool"]{   /* 冷靈藍灰 */
@@ -178,12 +180,12 @@
   .tl::after{content:''; position:absolute; left:23px; top:-7px;
              border-left:7px solid transparent; border-right:7px solid transparent;
              border-bottom:11px solid var(--blue); opacity:.55;}
-  .tl-item{position:relative; padding-left:46px; margin-bottom:11px; display:flex;}
-  .tl-node{position:absolute; left:8px; top:50%; transform:translateY(-50%);
+  .tl-item{position:relative; padding-left:46px; margin-bottom:11px; display:flex; flex-direction:column;}
+  .tl-node{position:absolute; left:8px; top:25px; transform:translateY(-50%);
            width:44px; height:44px; border-radius:50%; background:var(--accent); border:3px solid var(--bg);
            display:flex; align-items:center; justify-content:center;
            font-weight:800; font-size:16px; color:#fff; z-index:2; box-shadow:0 1px 3px rgba(0,0,0,.12);}
-  .tl-bar{flex:1; min-height:50px; background:var(--tlbar); color:var(--ink); border-radius:11px;
+  .tl-bar{min-height:50px; background:var(--tlbar); color:var(--ink); border-radius:11px;
           padding:10px 15px 10px 28px; display:flex; align-items:center; gap:10px;
           clip-path:polygon(0 0, 100% 0, 100% 100%, 0 100%, 15px 50%);}
   .tl-date{font-weight:700; font-size:15px; letter-spacing:.5px;}
@@ -192,6 +194,11 @@
             background:var(--muted); padding:3px 11px; border-radius:7px; letter-spacing:1px;}
   .tl-badge.gs{background:var(--sage);} .tl-badge.lk{background:var(--clay);}
   .tl-badge.off{background:#9479A6;}
+  /* 麗珠蘭 c-PDRN 加做註記：品牌金髮絲線＋明體（掛在該次橫條下） */
+  .tl-sub{margin:8px 4px 2px 16px; padding:2px 0 2px 14px; border-left:1px solid var(--gold);
+          font-family:var(--serif); font-size:14px; letter-spacing:2px; color:#2A4F49;}
+  .tl-sub .fl{color:var(--gold); margin-right:7px; font-size:12px;}
+  .tl-sub .n{color:var(--muted); font-size:12.5px; letter-spacing:1px; margin-left:8px;}
 
   #toast{
     position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(12px);
@@ -514,6 +521,7 @@ function renderHistory(){
         +   '<span class="tl-date">'+dateStr+'</span><span class="tl-wd">（'+wd+'）'+slotTxt+'</span>'
         +   (h.loc ? '<span class="tl-badge '+locCls+'">'+h.loc+'</span>' : '')
         + '</div>'
+        + (h.rejuran ? '<div class="tl-sub"><span class="fl">✦</span>麗珠蘭 c-PDRN<span class="n">第 '+h.rejuran+' 次</span></div>' : '')
         + '</div>';
     });
     html += '</div>';
