@@ -162,8 +162,11 @@
   /* 未來預約區（歷程頁上方） */
   .sec-head{font-size:14px; font-weight:700; color:var(--accent); letter-spacing:1px; margin:4px 2px 11px;}
   .fut-list{display:flex; flex-direction:column; gap:9px; margin-bottom:24px;}
-  .fut-card{display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--line);
+  .fut-card{display:flex; align-items:center; gap:12px; flex-wrap:wrap; background:var(--card); border:1px solid var(--line);
             border-left:4px solid var(--accent); border-radius:11px; padding:11px 15px;}
+  .fut-rj{font-family:var(--serif); font-size:13px; letter-spacing:1.5px; color:#2A4F49;}
+  .fut-rj .fl{color:var(--gold); margin-right:6px; font-size:11.5px;}
+  .fut-rj .s{color:var(--muted); font-size:12px; letter-spacing:.5px; margin-right:6px;}
   .fut-date{font-weight:700; font-size:15px; color:var(--ink);}
   .fut-wd{font-size:13px; color:var(--muted);}
 
@@ -474,7 +477,9 @@ function getFutureAppts(){
         if(s.pending) return;
         if(isMine(iso, s.key, wd)){
           const early = earlyTimeFor(WHO_TOKEN, wd, s.key);
-          out.push({ date:iso, wd, loc:raw.loc, label: early || s.label });
+          const bk = (CONFIG.bookings||[]).find(b=> b.date===iso && b.slot===s.key
+                       && (Array.isArray(b.who)?b.who.includes(WHO_TOKEN):b.who===WHO_TOKEN));
+          out.push({ date:iso, wd, loc:raw.loc, label: early || s.label, rejuran: !!(bk&&bk.rejuran) });
         }
       });
     }
@@ -497,9 +502,11 @@ function renderHistory(){
     const latest = past[0].date.replace(/-/g,'/');
     html += '<div class="hist-summary">您共施作 <b>'+past.length+'</b> 次　·　最近一次 '+latest+'</div>';
   }
-  // 麗珠蘭：建議下次施作時間（一組 3 次、同組間隔 1 個月；組間隔 6–8 個月）
+  // 麗珠蘭：建議下次施作時間（同組間隔 1 個月、組間隔 6–8 個月；建議日落在患者習慣回診的星期）
   const rjPast = past.filter(h=>h.rejuran);   // past 已新→舊，[0]＝最近一次麗珠蘭
-  if(rjPast.length){
+  const rjNextN = rjPast.length ? rjPast[0].rejuran+1 : 1;
+  const rjBooked = fut.some(f=>f.rejuran);    // 下次已跟美顏針一併預約 → 建議卡收起、顯示在該預約牌內
+  if(rjPast.length && !rjBooked){
     const n = rjPast[0].rejuran;
     const base = new Date(rjPast[0].date+'T00:00:00');
     const addM = (d,m)=>{ const x=new Date(d); x.setMonth(x.getMonth()+m); return x; };
@@ -508,16 +515,18 @@ function renderHistory(){
     let txt;
     if(n % 3 === 0){   // 一組 3 次已完成 → 下一組
       const a=addM(base,6), b=addM(base,8);
-      txt = (b<today0)
-        ? '下一組療程已可安排<span class="s">（組間隔 6–8 個月，一組 3 次）</span>'
-        : '建議下一組療程　<b>'+fmt(a)+' ～ '+fmt(b)+'</b><span class="s">（組間隔 6–8 個月，一組 3 次）</span>';
-    }else{             // 同組內 → 下一次隔 1 個月
-      const d=addM(base,1);
-      txt = (d<today0)
-        ? '第 '+(n+1)+' 次已可安排<span class="s">（同組間隔約 1 個月）</span>'
-        : '建議第 '+(n+1)+' 次　約 <b>'+fmt(d)+'</b><span class="s">（同組間隔約 1 個月）</span>';
+      txt = '下一組麗珠蘭　建議施作時間　<b>'+fmt(a)+' ～ '+fmt(b)+'</b><span class="s">（組間隔 6–8 個月，一組 3 次）</span>';
+    }else{             // 同組內 → 間隔 1 個月，取患者習慣星期（歷程眾數）前後兩個候選日
+      const target = addM(base,1);
+      const cnt={}; past.forEach(h=>{ const w=new Date(h.date+'T00:00:00').getDay(); cnt[w]=(cnt[w]||0)+1; });
+      const habit = +Object.keys(cnt).reduce((a,b)=> cnt[a]>=cnt[b]?a:b);
+      const diff = (habit - target.getDay() + 7) % 7;
+      const d2 = new Date(target); d2.setDate(d2.getDate()+diff);   // target 當日或之後最近的習慣日
+      const d1 = new Date(d2); d1.setDate(d1.getDate()-7);          // 再前一個習慣日
+      const opts = [d1,d2].filter(d=> d>today0 && (diff!==0 || +d===+d2));   // 正落習慣日就只給一天
+      txt = '第 '+(n+1)+' 次麗珠蘭　建議施作時間　<b>'+opts.map(fmt).join(' or ')+'</b>';
     }
-    html += '<div class="rj-next"><span class="fl">✦</span>麗珠蘭　'+txt+'</div>';
+    html += '<div class="rj-next"><span class="fl">✦</span>'+txt+'</div>';
   }
   // 未來預約
   if(fut.length){
@@ -528,6 +537,7 @@ function renderHistory(){
       const locCls = f.loc==='龜山' ? 'gs' : 'lk';
       html += '<div class="fut-card">'
         + '<span class="fut-date">'+dateStr+'</span><span class="fut-wd">（'+wd+'）· '+f.label+'</span>'
+        + (f.rejuran ? '<span class="fut-rj"><span class="fl">✦</span><span class="s">同日施作</span>麗珠蘭・第 '+rjNextN+' 次</span>' : '')
         + '<span class="tl-badge '+locCls+'">'+f.loc+'</span>'
         + '</div>';
     });
