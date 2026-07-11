@@ -521,7 +521,7 @@ function renderHistory(){
         +   '<span class="tl-date">'+dateStr+'</span><span class="tl-wd">（'+wd+'）'+slotTxt+'</span>'
         +   (h.loc ? '<span class="tl-badge '+locCls+'">'+h.loc+'</span>' : '')
         + '</div>'
-        + (h.rejuran ? '<div class="tl-sub"><span class="fl">✦</span>麗珠蘭 c-PDRN<span class="n">第 '+h.rejuran+' 次</span></div>' : '')
+        + (h.rejuran ? '<div class="tl-sub"><span class="fl">✦</span>麗珠蘭'+(h.rejuranType ? '・'+h.rejuranType : ' c-PDRN')+'<span class="n">第 '+h.rejuran+' 次</span></div>' : '')
         + '</div>';
     });
     html += '</div>';
