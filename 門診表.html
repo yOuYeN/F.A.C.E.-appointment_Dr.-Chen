@@ -307,7 +307,7 @@
 </div>
 
 <!-- 讀美顏針預約共用設定（同一份 config.js → 報到時間自動同步） -->
-<script src="config.js?v=25"></script>
+<script src="config.js?v=26"></script>
 <script>
   // 七月代診（龜山，不提供美顏針）。診別：早/午/晚
   const LOCUM = {
@@ -335,7 +335,7 @@
 
   function ymd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
   function personCount(b){ if(Array.isArray(b.who))return b.who.length; if(b.note){const m=b.note.match(/(\d+)\s*位/); if(m)return +m[1];} return 1; }
-  function bandSlots(band){ return band==='早診'?['09:00','10:00','11:00','11:30'] : band==='午診'?['13:55','15:00'] : ['17:15']; }
+  function bandSlots(band){ return band==='早診'?['09:00','10:00','11:00','11:30'] : band==='午診'?['13:55','15:00','15:30'] : ['17:15']; }
 
   // 固定每週門診（含週五/週六轉換日邏輯，與預約系統一致）
   function regularSessions(d){
@@ -386,8 +386,8 @@
       if(sm['09:00'] && sm['10:00'] && sm['11:30']) return '請於 10:30-11:15 間報到';
       return has11 ? '請 10:30 前報到' : (people>=2 ? '請 10:30 後報到' : '請 9:50 後報到');
     }
-    // 午診：有 15:00 第二診＝下午兩位美顏針→健保 16:00 後報到；只有 13:55→14:50 後
-    if(band==='午診') return sm['15:00'] ? '請 16:00 後報到' : '請 14:50 後報到';
+    // 午診：有 15:30 第二診→健保 16:30 後報到；有 15:00 第二診→16:00 後；只有 13:55→14:50 後
+    if(band==='午診') return sm['15:30'] ? '請 16:30 後報到' : sm['15:00'] ? '請 16:00 後報到' : '請 14:50 後報到';
     return '請 18:20 後報到';
   }
 
