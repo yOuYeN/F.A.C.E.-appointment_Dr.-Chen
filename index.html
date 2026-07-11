@@ -199,6 +199,13 @@
           font-family:var(--serif); font-size:14px; letter-spacing:2px; color:#2A4F49;}
   .tl-sub .fl{color:var(--gold); margin-right:7px; font-size:12px;}
   .tl-sub .n{color:var(--muted); font-size:12.5px; letter-spacing:1px; margin-left:8px;}
+  /* 麗珠蘭：建議下次施作卡（歷程摘要下方；規則＝一組 3 次、次間隔 1 個月、組間隔 6–8 個月） */
+  .rj-next{background:var(--card); border:1px solid var(--line); border-radius:12px;
+           padding:11px 16px; margin:-8px 0 20px; font-family:var(--serif); font-size:13.5px;
+           letter-spacing:1px; color:#2A4F49; text-align:center; line-height:1.8;}
+  .rj-next .fl{color:var(--gold); margin-right:6px; font-size:12px;}
+  .rj-next b{font-size:15px; letter-spacing:.5px;}
+  .rj-next .s{color:var(--muted); font-size:12px; letter-spacing:.5px;}
 
   #toast{
     position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(12px);
@@ -489,6 +496,28 @@ function renderHistory(){
   if(past.length){
     const latest = past[0].date.replace(/-/g,'/');
     html += '<div class="hist-summary">您共施作 <b>'+past.length+'</b> 次　·　最近一次 '+latest+'</div>';
+  }
+  // 麗珠蘭：建議下次施作時間（一組 3 次、同組間隔 1 個月；組間隔 6–8 個月）
+  const rjPast = past.filter(h=>h.rejuran);   // past 已新→舊，[0]＝最近一次麗珠蘭
+  if(rjPast.length){
+    const n = rjPast[0].rejuran;
+    const base = new Date(rjPast[0].date+'T00:00:00');
+    const addM = (d,m)=>{ const x=new Date(d); x.setMonth(x.getMonth()+m); return x; };
+    const fmt = d=> d.getFullYear()+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0');
+    const today0 = new Date(); today0.setHours(0,0,0,0);
+    let txt;
+    if(n % 3 === 0){   // 一組 3 次已完成 → 下一組
+      const a=addM(base,6), b=addM(base,8);
+      txt = (b<today0)
+        ? '下一組療程已可安排<span class="s">（組間隔 6–8 個月，一組 3 次）</span>'
+        : '建議下一組療程　<b>'+fmt(a)+' ～ '+fmt(b)+'</b><span class="s">（組間隔 6–8 個月，一組 3 次）</span>';
+    }else{             // 同組內 → 下一次隔 1 個月
+      const d=addM(base,1);
+      txt = (d<today0)
+        ? '第 '+(n+1)+' 次已可安排<span class="s">（同組間隔約 1 個月）</span>'
+        : '建議第 '+(n+1)+' 次　約 <b>'+fmt(d)+'</b><span class="s">（同組間隔約 1 個月）</span>';
+    }
+    html += '<div class="rj-next"><span class="fl">✦</span>麗珠蘭　'+txt+'</div>';
   }
   // 未來預約
   if(fut.length){
