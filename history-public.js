@@ -6,6 +6,8 @@
    ========================================================= */
 const HISTORY_PUBLIC = [
   {"pid":"XMR","date":"2026-07-12","loc":"林口","slot":"11:00","note":"第13次","rejuran":1,"rejuranType":"修復水光"},
+  {"pid":"LSS","date":"2026-07-12","loc":"林口","slot":"13:55","note":"第6次","rejuran":1,"rejuranType":"修復水光"},
+  {"pid":"LMY","date":"2026-07-12","loc":"林口","slot":"15:30","note":"第4次","rejuran":1,"rejuranType":"修復水光"},
   {"pid":"LBZ","date":"2026-07-10","loc":"龜山","slot":"09:00","note":"第4次"},
   {"pid":"WJY","date":"2026-07-10","loc":"龜山","slot":"09:00","note":"第4次"},
   {"pid":"LYX","date":"2026-07-05","loc":"林口","slot":"09:00","note":"第2次"},

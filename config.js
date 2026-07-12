@@ -51,6 +51,9 @@ const CONFIG = {
     { date:'2026-07-23', slot:'17:15', who:'LWZ' },
     { date:'2026-08-01', slot:'09:00', note:'母女綁定 2 位', who:['LBZ','WJY'] },
     { date:'2026-08-02', slot:'11:00', who:'LYH' },
+    { date:'2026-08-02', slot:'13:55', who:'LMY' },
+    { date:'2026-08-09', slot:'13:55', who:'LSS', rejuran:true },
+    { date:'2026-08-16', slot:'13:55', who:'LMY', rejuran:true },
   ],
 
   // ★ 特例加開時段（排班表沒有、單獨某日加開一格）：date, slot(時段代碼), label(格內顯示), copy(LINE 訊息用)
