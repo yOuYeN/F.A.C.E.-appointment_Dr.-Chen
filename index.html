@@ -298,7 +298,7 @@
 <div id="toast"></div>
 
 <!-- 預約資料與排程設定抽到共用檔（公開、無姓名）；本機後台 admin.html 也讀同一份 -->
-<script src="config.js?v=27"></script>
+<script src="config.js?v=28"></script>
 <script src="schedule-core.js?v=1"></script><!-- 共用排程邏輯（clinicForDate 等），與 admin/Yanice 共用 -->
 <script>
 /* 設定請改 config.js（以下為渲染邏輯，免改） */
@@ -519,7 +519,8 @@ function renderHistory(){
     }else{             // 同組內 → 間隔 1 個月，取患者習慣星期（歷程眾數）前後兩個候選日
       const target = addM(base,1);
       const cnt={}; past.forEach(h=>{ const w=new Date(h.date+'T00:00:00').getDay(); cnt[w]=(cnt[w]||0)+1; });
-      const habit = +Object.keys(cnt).reduce((a,b)=> cnt[a]>=cnt[b]?a:b);
+      const ovr=(CONFIG.rejuranHabitWeekday||{})[WHO_TOKEN];
+      const habit = (ovr!=null) ? ovr : +Object.keys(cnt).reduce((a,b)=> cnt[a]>=cnt[b]?a:b);
       const diff = (habit - target.getDay() + 7) % 7;
       const d2 = new Date(target); d2.setDate(d2.getDate()+diff);   // target 當日或之後最近的習慣日
       const d1 = new Date(d2); d1.setDate(d1.getDate()-7);          // 再前一個習慣日
