@@ -225,7 +225,7 @@
 
   <!-- 八月 -->
   <section class="seg" id="p1m8">
-    <div class="seg-head"><span class="m">2026 年 8 月</span><span class="tag">週五早診改 林口</span></div>
+    <div class="seg-head"><span class="m">2026 年 8 月</span></div>
     <table>
       <thead><tr>
         <th class="corner"></th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th><th>日</th>
@@ -233,7 +233,7 @@
       <tbody>
         <tr><th>早診<span class="t">09:00 – 12:00</span></th>
           <td class="none">—</td><td class="none">—</td><td class="none">—</td><td class="none">—</td>
-          <td class="lk"><span class="loc lk">林口</span></td><td class="gs sat"><span class="loc gs">龜山</span><span class="satbadge">輪診</span></td><td class="lk"><span class="loc lk">林口</span></td></tr>
+          <td class="gs"><span class="loc gs">龜山</span></td><td class="gs sat"><span class="loc gs">龜山</span><span class="satbadge">輪診</span></td><td class="lk"><span class="loc lk">林口</span></td></tr>
         <tr><th>午診<span class="t">14:00 – 17:00</span></th>
           <td class="gs"><span class="loc gs">龜山</span></td><td class="none">—</td><td class="none">—</td><td class="none">—</td>
           <td class="none">—</td><td class="gs"><span class="loc gs">龜山</span></td><td class="lk"><span class="loc lk">林口</span></td></tr>
@@ -249,7 +249,7 @@
 
   <!-- 九月 -->
   <section class="seg" id="p1m9">
-    <div class="seg-head"><span class="m">2026 年 9 月</span></div>
+    <div class="seg-head"><span class="m">2026 年 9 月</span><span class="tag">週五早診改 林口</span></div>
     <table>
       <thead><tr>
         <th class="corner"></th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th><th>日</th>
@@ -307,7 +307,7 @@
 </div>
 
 <!-- 讀美顏針預約共用設定（同一份 config.js → 報到時間自動同步） -->
-<script src="config.js?v=29"></script>
+<script src="config.js?v=30"></script>
 <script>
   // 七月代診（龜山，不提供美顏針）。診別：早/午/晚
   const LOCUM = {
@@ -421,7 +421,7 @@
     const first=new Date(y,m,1);
     const ndays=new Date(y,m+1,0).getDate();
     const lead=(first.getDay()+6)%7; // 週一為首
-    const tags={6:'現行時段 · 七月代診',7:'週五早診改林口'};
+    const tags={6:'現行時段 · 七月代診',8:'週五早診改林口'};
     let g='<div class="cal-grid">';
     ['一','二','三','四','五','六','日'].forEach(w=> g+='<div class="cal-wd">'+w+'</div>');
     for(let i=0;i<lead;i++) g+='<div class="cal-day pad"></div>';
