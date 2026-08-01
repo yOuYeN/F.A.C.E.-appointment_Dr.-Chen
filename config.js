@@ -32,7 +32,7 @@ const CONFIG = {
   rejuranHabitWeekday: { XMR: 5 },
 
   // ★ 週六早上「待定」月份（顯示灰底不開放，等月初公告後再補入 saturdayMorningDates）
-  saturdayMorningPendingMonths: ['2026-09'],
+  saturdayMorningPendingMonths: ['2026-09', '2026-10'],
 
   // ★ 關閉指定日期的某個時段（該格完全不顯示，含週日固定 11:00）：'YYYY-MM-DD|時段代碼'
   closedSlots: ['2026-07-05|11:00', '2026-07-19|11:00', '2026-08-02|11:00'],
