@@ -365,11 +365,12 @@
   function reportNote(iso, band, d){
     const slots=bandSlots(band);
     const closed=CFG.closedSlots||[];
-    let people=0, has11=false, earlyRep=null;
+    let people=0, has11=false, earlyRep=null, hasRejuran=false;
     const sm={};   // 該診已約的時段集合
     (CFG.bookings||[]).forEach(b=>{
       if(b.date===iso && slots.includes(b.slot) && !closed.includes(iso+'|'+b.slot)){
         if(b.slot==='11:00')has11=true;
+        if(b.rejuran)hasRejuran=true;
         sm[b.slot]=true;
         people+=personCount(b);
         (Array.isArray(b.who)?b.who:[b.who]).forEach(w=>{ const rep=earlyReportFor(w, d.getDay(), b.slot); if(rep) earlyRep=rep; });
@@ -385,8 +386,10 @@
       if(sm['09:00'] && sm['10:00'] && sm['11:30']) return '請於 10:30-11:15 間報到';
       return has11 ? '請 10:30 前報到' : (people>=2 ? '請 10:30 後報到' : '請 9:50 後報到');
     }
-    // 午診：有 15:30 第二診→健保 16:30 後報到；有 15:00 第二診→16:00 後；只有 13:55→14:50 後
-    if(band==='午診') return sm['15:30'] ? '請 16:30 後報到' : sm['15:00'] ? '請 16:00 後報到' : '請 14:50 後報到';
+    // 午診：有 15:30 第二診→健保 16:30 後報到；有 15:00 第二診→16:00 後；
+    //       有加做麗珠蘭（施作較久）→15:30 後；純美顏針只有 13:55 一位→15:10 後、兩位以上→14:50 後
+    if(band==='午診') return sm['15:30'] ? '請 16:30 後報到' : sm['15:00'] ? '請 16:00 後報到'
+                           : hasRejuran ? '請 15:30 後報到' : people===1 ? '請 15:10 後報到' : '請 14:50 後報到';
     return '請 18:20 後報到';
   }
 
