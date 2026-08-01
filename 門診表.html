@@ -306,7 +306,7 @@
 </div>
 
 <!-- 讀美顏針預約共用設定（同一份 config.js → 報到時間自動同步） -->
-<script src="config.js?v=33"></script>
+<script src="config.js?v=34"></script>
 <script>
   // 七月代診（龜山，不提供美顏針）。診別：早/午/晚
   const LOCUM = {
@@ -416,7 +416,7 @@
       const cls = s.loc==='林口' ? 'lk' : 'gs';
       inner += '<div class="sess '+cls+'"><span class="b">'+s.band[0]+'</span>'+s.loc
             + (s.locum ? ' <span class="lcm">代</span>' : '')
-            + (s.note ? '<span class="rpt">'+s.note.replace(/(前|後)報到/,'<span class="ba">$1</span>報到')+'</span>' : '') + '</div>';
+            + (s.note ? '<span class="rpt">'+s.note.replace(/(前|後)(?=報到|或)/g,'<span class="ba">$1</span>')+'</span>' : '') + '</div>';
     });
     return '<div class="cal-day'+extra+'">'+inner+'</div>';
   }
