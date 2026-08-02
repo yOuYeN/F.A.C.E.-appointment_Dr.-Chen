@@ -8,6 +8,8 @@ const HISTORY_PUBLIC = [
   {"pid":"LYX","date":"2026-08-02","loc":"林口","slot":"09:00","note":"第4次"},
   {"pid":"LYF","date":"2026-08-02","loc":"林口","slot":"10:00","note":"第4次"},
   {"pid":"XMR","date":"2026-08-02","loc":"林口","slot":"11:30","note":"第14次"},
+  {"pid":"LMY","date":"2026-08-02","loc":"林口","slot":"13:55","note":"第5次"},
+  {"pid":"LYH","date":"2026-08-02","loc":"林口","slot":"15:10","note":"第3次"},
   {"pid":"LBZ","date":"2026-08-01","loc":"龜山","slot":"09:00","note":"第5次"},
   {"pid":"WJY","date":"2026-08-01","loc":"龜山","slot":"09:00","note":"第5次"},
   {"pid":"LXYx3tW","date":"2026-08-01","loc":"龜山","slot":"17:15","note":"第2次"},
