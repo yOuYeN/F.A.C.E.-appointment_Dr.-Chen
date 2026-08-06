@@ -24,13 +24,16 @@ function sundayFixedActive(iso){
 function clinicForDate(d){
   const wd = d.getDay();           // 0=日 .. 6=六
   const iso = ymd(d);
-  const friAfter = iso >= CONFIG.fridayToLinkouDate;   // 週五是否已轉林口
+  const friPm = iso >= CONFIG.fridayLinkouPmDate;      // 週五是否已增開林口午診
   const satAfter = iso >= CONFIG.saturdayExtraDate;     // 週六是否已加下午+晚上
   let loc=null, slots=[];
 
   if(wd===1){ loc='龜山'; slots=[{key:'13:55',label:'13:55',copy:'13:55'}]; }            // 一
   else if(wd===4){ loc='龜山'; slots=[{key:'17:15',label:'17:15',copy:'17:15'}]; }       // 四
-  else if(wd===5){ loc = friAfter?'林口':'龜山'; slots=[{key:'09:00',label:'早上',copy:'早上 (09:00 - 12:00)'}]; } // 五
+  else if(wd===5){                                                                       // 五：早診龜山；九月起加午診林口（slot.loc 覆寫當日院區）
+    loc='龜山'; slots=[{key:'09:00',label:'早上',copy:'早上 (09:00 - 12:00)'}];
+    if(friPm) slots.push({key:'13:55',label:'13:55',copy:'下午 13:55 (林口)',loc:'林口'});
+  }
   else if(wd===0){ loc='林口'; slots=[{key:'11:00',label:'11:00',copy:'11:00'},{key:'13:55',label:'13:55',copy:'13:55'}]; } // 日
   else if(wd===6){                                                                       // 六
     loc='龜山';
