@@ -111,6 +111,10 @@
   }
   .loc.gs{background:var(--sage);}
   .loc.lk{background:var(--clay);}
+  /* 混合日（週五早龜山＋午林口）：院區小標掛在時段列左側 */
+  .chiprow{display:flex; gap:4px; align-items:center;}
+  .chiprow .chip{flex:1; min-width:0;}
+  .loc.inrow{float:none; flex:none;}
   .offtag{
     margin-top:8px; text-align:center; font-size:11px; color:var(--muted);
     font-weight:700; letter-spacing:2px;
@@ -350,13 +354,15 @@ function buildMonth(monthStr){
       cls += ' off';
       inner += '<span class="daynum">'+day+'</span><div class="offtag">休診</div>';
     } else if(raw){                       // 正常門診日
-      // 單日雙院區（九月起週五早龜山＋午林口）：slot.loc 覆寫者一併列出院區標籤
+      // 單日雙院區（九月起週五早龜山＋午林口）：混合日角落不掛標，改每列時段前掛該時段的院區小標
       const dayLocs = [...new Set([raw.loc].concat(raw.slots.map(s=>s.loc).filter(Boolean)))];
-      dayLocs.forEach(L=>{ inner += '<span class="loc '+(L==='龜山'?'gs':'lk')+'">'+L+'</span>'; });
-      inner += '<span class="daynum">'+day+'</span><div class="chips">';
       const mixed = dayLocs.length>1;
+      if(!mixed) inner += '<span class="loc '+(raw.loc==='龜山'?'gs':'lk')+'">'+raw.loc+'</span>';
+      inner += '<span class="daynum">'+day+'</span><div class="chips">';
       raw.slots.forEach(s=>{
-        const lblLoc = (mixed && s.loc) ? ' '+s.loc : (mixed ? ' '+raw.loc : '');
+        const sLoc = s.loc || raw.loc;
+        const rowPre  = mixed ? '<span class="chiprow"><span class="loc inrow '+(sLoc==='龜山'?'gs':'lk')+'">'+sLoc+'</span>' : '';
+        const rowPost = mixed ? '</span>' : '';
         if(s.pending){
           inner += '<span class="chip pending">待定</span>';
           return;
@@ -369,14 +375,14 @@ function buildMonth(monthStr){
           const cpy = early || s.copy;
           const cancelMsg = '想取消 '+m+'/'+day+' ('+WD_NAMES[wd]+') '+cpy+' 的預約';
           const cancelAttr = (isPast || isToday) ? '' : ' data-cancel="'+cancelMsg+'"';
-          inner += '<span class="chip mine"'+cancelAttr+'>★ '+lbl+lblLoc+'</span>';
+          inner += rowPre+'<span class="chip mine"'+cancelAttr+'>★ '+lbl+'</span>'+rowPost;
         } else if(isPast || isToday){
-          inner += '<span class="chip closed">'+s.label+lblLoc+'</span>';
+          inner += rowPre+'<span class="chip closed">'+s.label+'</span>'+rowPost;
         } else if(booked){
-          inner += '<span class="chip busy">'+s.label+lblLoc+'</span>';
+          inner += rowPre+'<span class="chip busy">'+s.label+'</span>'+rowPost;
         } else {
           const msg = '想預約 '+m+'/'+day+' ('+WD_NAMES[wd]+') '+s.copy;
-          inner += '<span class="chip free" data-msg="'+msg+'">'+s.label+lblLoc+'</span>';
+          inner += rowPre+'<span class="chip free" data-msg="'+msg+'">'+s.label+'</span>'+rowPost;
         }
       });
       inner += '</div>';
