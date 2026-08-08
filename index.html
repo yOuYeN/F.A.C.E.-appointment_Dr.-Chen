@@ -371,7 +371,7 @@ function buildMonth(monthStr){
         const booked = !mine&&isBooked(iso,s.key,wd);
         if(mine){
           const early = earlyTimeFor(WHO_TOKEN, wd, s.key);
-          const lbl = early || s.label;
+          const lbl = early || s.key;   // 已約的顯示實際時間（「早上」這種帶狀標籤只給可約格用）
           const cpy = early || s.copy;
           const cancelMsg = '想取消 '+m+'/'+day+' ('+WD_NAMES[wd]+') '+cpy+' 的預約';
           const cancelAttr = (isPast || isToday) ? '' : ' data-cancel="'+cancelMsg+'"';
@@ -379,7 +379,7 @@ function buildMonth(monthStr){
         } else if(isPast || isToday){
           inner += rowPre+'<span class="chip closed">'+s.label+'</span>'+rowPost;
         } else if(booked){
-          inner += rowPre+'<span class="chip busy">'+s.label+'</span>'+rowPost;
+          inner += rowPre+'<span class="chip busy">'+s.key+'</span>'+rowPost;
         } else {
           const msg = '想預約 '+m+'/'+day+' ('+WD_NAMES[wd]+') '+s.copy;
           inner += rowPre+'<span class="chip free" data-msg="'+msg+'">'+s.label+'</span>'+rowPost;
