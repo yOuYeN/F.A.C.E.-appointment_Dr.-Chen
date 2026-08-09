@@ -306,7 +306,7 @@
 </div>
 
 <!-- 讀美顏針預約共用設定（同一份 config.js → 報到時間自動同步） -->
-<script src="config.js?v=46"></script>
+<script src="config.js?v=47"></script>
 <script>
   // 七月代診（龜山，不提供美顏針）。診別：早/午/晚
   const LOCUM = {
@@ -335,7 +335,7 @@
   function ymd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
   function personCount(b){ if(Array.isArray(b.who))return b.who.length; if(b.note){const m=b.note.match(/(\d+)\s*位/); if(m)return +m[1];} return 1; }
   // ★ 這份清單是「哪些時段算進該診」的白名單——extraSlots 加開新時段時要同步加，否則 reportNote 會靜默漏算
-  function bandSlots(band){ return band==='早診'?['09:00','10:00','11:00','11:30'] : band==='午診'?['13:00','13:55','15:00','15:10','15:30'] : ['17:15']; }
+  function bandSlots(band){ return band==='早診'?['09:00','10:00','11:00','11:30'] : band==='午診'?['13:00','13:50','13:55','15:00','15:10','15:30'] : ['17:15']; }
 
   // 固定每週門診（含週五/週六轉換日邏輯，與預約系統一致）
   function regularSessions(d){
