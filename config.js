@@ -52,7 +52,6 @@ const CONFIG = {
     { date:'2026-08-02', slot:'15:10', who:'LYH' },
     { date:'2026-08-09', slot:'10:00', who:'QMY' },
     { date:'2026-08-14', slot:'09:00', who:'LXYx3tW' },
-    { date:'2026-08-14', slot:'11:00', who:'XMR' },
     { date:'2026-08-15', slot:'09:00', who:'DFR' },
     { date:'2026-08-16', slot:'09:00', who:'LYX' },
     { date:'2026-08-16', slot:'10:00', who:'LYF' },
@@ -60,6 +59,7 @@ const CONFIG = {
     { date:'2026-08-16', slot:'15:10', who:'LYH' },
     { date:'2026-08-20', slot:'17:15', who:'LWZ' },
     { date:'2026-08-23', slot:'09:00', note:'母女綁定 2 位', who:['LBZ','WJY'] },
+    { date:'2026-09-04', slot:'09:00', who:'LXYx3tW' },
     { date:'2026-09-06', slot:'10:00', who:'QMY' },
   ],
 
@@ -70,7 +70,6 @@ const CONFIG = {
     { date:'2026-08-02', slot:'11:30', label:'11:30', copy:'早上 11:30' },
     { date:'2026-08-02', slot:'15:10', label:'15:10', copy:'下午 15:10' },
     { date:'2026-08-09', slot:'10:00', label:'10:00', copy:'早上 10:00' },
-    { date:'2026-08-14', slot:'11:00', label:'11:00', copy:'早上 11:00' },
     { date:'2026-08-16', slot:'09:00', label:'09:00', copy:'早上 09:00' },
     { date:'2026-08-16', slot:'10:00', label:'10:00', copy:'早上 10:00' },
     { date:'2026-08-16', slot:'11:30', label:'11:30', copy:'早上 11:30' },
