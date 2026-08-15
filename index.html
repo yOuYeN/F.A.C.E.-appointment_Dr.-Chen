@@ -111,10 +111,16 @@
   }
   .loc.gs{background:var(--sage);}
   .loc.lk{background:var(--clay);}
-  /* 混合日（週五早龜山＋午林口）：院區小標掛在時段列左側 */
+  /* 混合日（週五早龜山＋午林口）：院區小標掛在時段列左側；窄幕縮成單字「龜/林」讓時間完整顯示 */
   .chiprow{display:flex; gap:4px; align-items:center;}
   .chiprow .chip{flex:1; min-width:0;}
   .loc.inrow{float:none; flex:none;}
+  .loc.inrow .ls{display:none;}
+  @media(max-width:560px){
+    .loc.inrow .lf{display:none;}
+    .loc.inrow .ls{display:inline;}
+    .loc.inrow{padding:1px 5px;}
+  }
   .offtag{
     margin-top:8px; text-align:center; font-size:11px; color:var(--muted);
     font-weight:700; letter-spacing:2px;
@@ -361,7 +367,7 @@ function buildMonth(monthStr){
       inner += '<span class="daynum">'+day+'</span><div class="chips">';
       raw.slots.forEach(s=>{
         const sLoc = s.loc || raw.loc;
-        const rowPre  = mixed ? '<span class="chiprow"><span class="loc inrow '+(sLoc==='龜山'?'gs':'lk')+'">'+sLoc+'</span>' : '';
+        const rowPre  = mixed ? '<span class="chiprow"><span class="loc inrow '+(sLoc==='龜山'?'gs':'lk')+'"><span class="lf">'+sLoc+'</span><span class="ls">'+sLoc.charAt(0)+'</span></span>' : '';
         const rowPost = mixed ? '</span>' : '';
         if(s.pending){
           inner += '<span class="chip pending">待定</span>';
