@@ -60,6 +60,7 @@ const CONFIG = {
     { date:'2026-08-20', slot:'17:15', who:'LWZ' },
     { date:'2026-08-22', slot:'17:15', who:'DFRs8m8' },
     { date:'2026-08-23', slot:'09:00', note:'母女綁定 2 位', who:['LBZ','WJY'] },
+    { date:'2026-08-23', slot:'13:55', who:'LMY', rejuran:true },
     { date:'2026-09-04', slot:'09:00', who:'LXYx3tW' },
     { date:'2026-09-06', slot:'10:00', who:'QMY' },
   ],
