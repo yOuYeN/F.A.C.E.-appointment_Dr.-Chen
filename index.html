@@ -285,7 +285,7 @@
   <div id="calendar"></div>
 
   <div class="share">
-    <p class="share-desc">若要分享給看「<b>一般門診</b>」（非美顏針）的親友，請使用下方門診時間表連結：</p>
+    <p class="share-desc">若要分享給看「<b>一般門診</b>」(非美顏針) 的親友，請使用下方門診時間表連結：</p>
     <p style="text-align:center; margin:0;">
       <a href="門診表.html" class="sharebtn">📋 查看完整門診時間表 ›</a>
     </p>
@@ -530,7 +530,7 @@ function renderHistory(){
     let txt;
     if(n % 3 === 0){   // 一組 3 次已完成 → 下一組
       const a=addM(base,6), b=addM(base,8);
-      txt = '下一組麗珠蘭　建議施作時間　<b>'+fmt(a)+' ～ '+fmt(b)+'</b><span class="s">（組間隔 6–8 個月，一組 3 次）</span>';
+      txt = '下一組麗珠蘭　建議施作時間　<b>'+fmt(a)+' ～ '+fmt(b)+'</b><span class="s"> (組間隔 6–8 個月，一組 3 次)</span>';
     }else{             // 同組內 → 間隔 1 個月，取患者習慣星期（歷程眾數）前後兩個候選日
       const target = addM(base,1);
       const cnt={}; past.forEach(h=>{ const w=new Date(h.date+'T00:00:00').getDay(); cnt[w]=(cnt[w]||0)+1; });
@@ -546,13 +546,13 @@ function renderHistory(){
   }
   // 未來預約
   if(fut.length){
-    html += '<div class="sec-head">📅 接下來的預約（'+fut.length+'）</div><div class="fut-list">';
+    html += '<div class="sec-head">📅 接下來的預約 ('+fut.length+')</div><div class="fut-list">';
     fut.forEach(f=>{
       const dateStr = f.date.replace(/-/g,'/');
       const wd = WD_NAMES[f.wd];
       const locCls = f.loc==='龜山' ? 'gs' : 'lk';
       html += '<div class="fut-card">'
-        + '<span class="fut-date">'+dateStr+'</span><span class="fut-wd">（'+wd+'）· '+f.label+'</span>'
+        + '<span class="fut-date">'+dateStr+'</span><span class="fut-wd">('+wd+') · '+f.label+'</span>'
         + (f.rejuran ? '<span class="fut-rj"><span class="fl">✦</span><span class="s">同日施作</span>麗珠蘭・第 '+rjNextN+' 次</span>' : '')
         + '<span class="tl-badge '+locCls+'">'+f.loc+'</span>'
         + '</div>';
@@ -573,7 +573,7 @@ function renderHistory(){
       html += '<div class="tl-item">'
         + '<div class="tl-node">'+num+'</div>'
         + '<div class="tl-bar">'
-        +   '<span class="tl-date">'+dateStr+'</span><span class="tl-wd">（'+wd+'）'+slotTxt+'</span>'
+        +   '<span class="tl-date">'+dateStr+'</span><span class="tl-wd">('+wd+')'+slotTxt+'</span>'
         +   (h.loc ? '<span class="tl-badge '+locCls+'">'+h.loc+'</span>' : '')
         + '</div>'
         + (h.rejuran ? '<div class="tl-sub"><span class="fl">✦</span>麗珠蘭'+(h.rejuranType ? '・'+h.rejuranType : ' c-PDRN')+'<span class="n">第 '+h.rejuran+' 次</span></div>' : '')
