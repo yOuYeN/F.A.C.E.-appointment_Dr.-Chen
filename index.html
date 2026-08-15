@@ -116,10 +116,10 @@
   .chiprow .chip{flex:1; min-width:0;}
   .loc.inrow{float:none; flex:none;}
   .loc.inrow .ls{display:none;}
+  /* 窄幕：格內寬不足以橫排（13:55 單顆已近滿版）→ 改直排：院區標一行、時段一行 */
   @media(max-width:560px){
-    .loc.inrow .lf{display:none;}
-    .loc.inrow .ls{display:inline;}
-    .loc.inrow{padding:1px 5px;}
+    .chiprow{flex-direction:column; align-items:stretch; gap:2px;}
+    .loc.inrow{align-self:flex-start; padding:1px 6px;}
   }
   .offtag{
     margin-top:8px; text-align:center; font-size:11px; color:var(--muted);
