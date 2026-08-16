@@ -5,6 +5,7 @@
    ★ 前台 index.html「我的歷程」Tab 依網址 ?who=pid 過濾顯示。
    ========================================================= */
 const HISTORY_PUBLIC = [
+  {"pid":"LSS","date":"2026-08-16","loc":"林口","slot":"13:50","note":"第7次","rejuran":2,"rejuranType":"修復水光"},
   {"pid":"LYX","date":"2026-08-16","loc":"林口","slot":"09:00","note":"第5次"},
   {"pid":"LYF","date":"2026-08-16","loc":"林口","slot":"10:00","note":"第5次"},
   {"pid":"DFRs8m8","date":"2026-08-15","loc":"龜山","slot":"09:00","note":"第1次"},
