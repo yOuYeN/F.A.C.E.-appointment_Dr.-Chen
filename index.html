@@ -136,6 +136,7 @@
   .chip.busy{background:var(--purple); text-decoration:line-through; text-decoration-thickness:1px; opacity:.92;}
   .chip.mine{background:var(--mine); cursor:pointer; transition:filter .08s;}
   .chip.mine:hover{filter:brightness(1.08);}
+  .chip.mine .st{font-size:8px; margin-right:2px;}
   .chip.pending{background:var(--muted); cursor:default; opacity:.7; font-style:italic;}
   .chip.closed{background:var(--ink); cursor:default; opacity:.72;}
 
@@ -381,7 +382,7 @@ function buildMonth(monthStr){
           const cpy = early || s.copy;
           const cancelMsg = '想取消 '+m+'/'+day+' ('+WD_NAMES[wd]+') '+cpy+' 的預約';
           const cancelAttr = (isPast || isToday) ? '' : ' data-cancel="'+cancelMsg+'"';
-          inner += rowPre+'<span class="chip mine"'+cancelAttr+'>★ '+lbl+'</span>'+rowPost;
+          inner += rowPre+'<span class="chip mine"'+cancelAttr+'><span class="st">★</span>'+lbl+'</span>'+rowPost;
         } else if(isPast || isToday){
           inner += rowPre+'<span class="chip closed">'+s.label+'</span>'+rowPost;
         } else if(booked){
