@@ -122,9 +122,10 @@
   .cal-day.today{outline:2px solid var(--head); outline-offset:-2px;}
   .cal-day.today .dnum{color:#fff; background:var(--head); border-radius:4px;
                        padding:1px 6px; font-weight:700;}
-  .cal-day .dnum{font-size:13.5px; color:var(--muted); font-weight:700; text-align:right; margin-bottom:2px;}
+  .cal-day .dnum{font-size:13.5px; color:var(--muted); font-weight:700; text-align:right; margin-bottom:2px; padding:1px 0;}  /* 直向 padding 與 today 高亮一致，否則 today 那格整體低 2px */
   .cal-day.off .rest{color:var(--muted); font-size:13.5px; text-align:center; margin-top:8px;}
-  .sess{margin-top:3px; border-radius:5px; padding:3px 5px; font-size:13px; line-height:1.4;}
+  .bslot{margin-top:3px;}
+  .sess{border-radius:5px; padding:3px 5px; font-size:13px; line-height:1.4;}
   .sess.gs{background:var(--sage-bg); color:#4f6049;}
   .sess.lk{background:var(--clay-bg); color:#7a4f44;}
   .sess .b{font-weight:700; margin-right:3px;}
@@ -224,7 +225,7 @@
 
   <!-- 九月 -->
   <section class="seg" id="p1m9">
-    <div class="seg-head"><span class="m">2026 年 9 月</span><span class="tag">週五增開下午 林口</span></div>
+    <div class="seg-head"><span class="m">2026 年 9 月</span><span class="tag">週五新增林口下午診</span></div>
     <table>
       <thead><tr>
         <th class="corner"></th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th><th>日</th>
@@ -330,6 +331,7 @@
     document.getElementById('page2').classList.toggle('hidden', n!==2);
     document.getElementById('btn1').classList.toggle('active', n===1);
     document.getElementById('btn2').classList.toggle('active', n===2);
+    if(n===2 && typeof alignBands==='function') alignBands();   // 月曆頁顯示後才量得到高度
     window.scrollTo(0,0);
   }
 
@@ -418,11 +420,18 @@
     let inner='<div class="dnum">'+d.getDate()+'</div>';
     if(info.off) return '<div class="cal-day off'+extra+'">'+inner+'<div class="rest">休診</div></div>';
     if(!info.list.length) return '<div class="cal-day'+extra+'">'+inner+'</div>';
-    info.list.forEach(s=>{
-      const cls = s.loc==='林口' ? 'lk' : 'gs';
-      inner += '<div class="sess '+cls+'"><span class="b">'+s.band[0]+'</span>'+s.loc
-            + (s.locum ? ' <span class="lcm">代</span>' : '')
-            + (s.note ? '<span class="rpt">'+s.note.replace(/(前|後)(?=報到|或)/g,'<span class="ba">$1</span>')+'</span>' : '') + '</div>';
+    // 每格固定三個槽（早/午/晚；沒診留空槽），渲染後 alignBands() 把同一週同槽高度拉齊
+    const byBand={}; info.list.forEach(s=>{ byBand[s.band]=s; });
+    ['早診','午診','晚診'].forEach(b=>{
+      const s=byBand[b];
+      inner += '<div class="bslot" data-b="'+b+'">';
+      if(s){
+        const cls = s.loc==='林口' ? 'lk' : 'gs';
+        inner += '<div class="sess '+cls+'"><span class="b">'+s.band[0]+'</span>'+s.loc
+              + (s.locum ? ' <span class="lcm">代</span>' : '')
+              + (s.note ? '<span class="rpt">'+s.note.replace(/(前|後)(?=報到|或)/g,'<span class="ba">$1</span>')+'</span>' : '') + '</div>';
+      }
+      inner += '</div>';
     });
     return '<div class="cal-day'+extra+'">'+inner+'</div>';
   }
@@ -431,7 +440,7 @@
     const first=new Date(y,m,1);
     const ndays=new Date(y,m+1,0).getDate();
     const lead=(first.getDay()+6)%7; // 週一為首
-    const tags={7:'現行時段',8:'週五增開午診(林口)'};
+    const tags={7:'現行時段',8:'週五新增林口下午診'};
     let g='<div class="cal-grid">';
     ['一','二','三','四','五','六','日'].forEach(w=> g+='<div class="cal-wd">'+w+'</div>');
     for(let i=0;i<lead;i++) g+='<div class="cal-day pad"></div>';
@@ -442,6 +451,23 @@
   }
 
   document.getElementById('cal').innerHTML = buildMonth(2026,7)+buildMonth(2026,8)+buildMonth(2026,9);
+
+  // 同一週每天的早/午/晚對齊：同槽取該週最高，空槽也撐同高（月曆頁顯示中才量得到高度）
+  function alignBands(){
+    document.querySelectorAll('.cal-grid').forEach(grid=>{
+      const days=[...grid.querySelectorAll('.cal-day')];
+      for(let i=0;i<days.length;i+=7){
+        const week=days.slice(i,i+7);
+        ['早診','午診','晚診'].forEach(b=>{
+          const slots=week.map(c=>c.querySelector('.bslot[data-b="'+b+'"]')).filter(Boolean);
+          slots.forEach(el=>{ el.style.minHeight=''; });
+          const h=Math.max(0,...slots.map(el=>el.getBoundingClientRect().height));   // 小數高度，避免整數捨入差 1px
+          slots.forEach(el=>{ el.style.minHeight=h+'px'; });
+        });
+      }
+    });
+  }
+  window.addEventListener('resize', alignBands);
   if(location.hash==='#p2') showPage(2);
 </script>
 </body>
