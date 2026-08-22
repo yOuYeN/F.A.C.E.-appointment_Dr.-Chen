@@ -65,6 +65,7 @@ const CONFIG = {
     { date:'2026-08-30', slot:'09:00', who:'LYX' },
     { date:'2026-08-30', slot:'10:00', who:'LYF' },
     { date:'2026-09-04', slot:'09:00', who:'LXYx3tW' },
+    { date:'2026-09-05', slot:'19:00', who:'YJYqg8h' },
     { date:'2026-09-06', slot:'10:00', who:'QMY' },
     { date:'2026-09-06', slot:'13:55', who:'LMY' },
     { date:'2026-09-13', slot:'13:55', who:'LSS', rejuran:true },
@@ -89,6 +90,7 @@ const CONFIG = {
     { date:'2026-08-23', slot:'11:30', label:'11:30', copy:'早上 11:30' },
     { date:'2026-08-23', slot:'16:20', label:'16:20', copy:'下午 16:20' },
     { date:'2026-08-22', slot:'19:00', label:'19:00', copy:'晚上 19:00' },
+    { date:'2026-09-05', slot:'19:00', label:'19:00', copy:'晚上 19:00' },
   ],
 
   // ★ 個別患者「提早報到」特例（僅該患者「專屬連結 ?who=」與本機後台顯示調整後時間；公用頁與其他人完全不變）
