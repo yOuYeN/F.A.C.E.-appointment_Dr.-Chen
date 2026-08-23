@@ -309,7 +309,7 @@
 <div id="toast"></div>
 
 <!-- 預約資料與排程設定抽到共用檔（公開、無姓名）；本機後台 admin.html 也讀同一份 -->
-<script src="config.js?v=60"></script>
+<script src="config.js?v=61"></script>
 <script src="schedule-core.js?v=2"></script><!-- 共用排程邏輯（clinicForDate 等），與 admin/Yanice 共用 -->
 <script>
 /* 設定請改 config.js（以下為渲染邏輯，免改） */
@@ -529,7 +529,10 @@ function renderHistory(){
     const fmt = d=> d.getFullYear()+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0');
     const today0 = new Date(); today0.setHours(0,0,0,0);
     let txt;
-    if(n % 3 === 0){   // 一組 3 次已完成 → 下一組
+    const rjPin = (CONFIG.rejuranSuggestPin||{})[WHO_TOKEN];
+    if(rjPin && new Date(rjPin+'T00:00:00') > today0){   // 指定單一建議日覆寫（過期自動失效）
+      txt = '第 '+(n+1)+' 次麗珠蘭　建議施作時間　<b>'+fmt(new Date(rjPin+'T00:00:00'))+'</b>';
+    }else if(n % 3 === 0){   // 一組 3 次已完成 → 下一組
       const a=addM(base,6), b=addM(base,8);
       txt = '下一組麗珠蘭　建議施作時間　<b>'+fmt(a)+' ～ '+fmt(b)+'</b><span class="s"> (組間隔 6–8 個月，一組 3 次)</span>';
     }else{             // 同組內 → 間隔 1 個月，取患者習慣星期（歷程眾數）前後兩個候選日

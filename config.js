@@ -32,6 +32,9 @@ const CONFIG = {
   //   患者之後固定回診日改了、但歷程眾數還停在舊星期時用（代碼非姓名）
   rejuranHabitWeekday: { XMR: 5 },
 
+  // ★ 麗珠蘭建議日「只顯示指定單一日期」覆寫（演算法給多個候選日、想只留一個時用；日期過了自動失效回演算法）
+  rejuranSuggestPin: { LMY: '2026-09-27' },
+
   // ★ 週六早上「待定」月份（顯示灰底不開放，等月初公告後再補入 saturdayMorningDates）
   saturdayMorningPendingMonths: ['2026-10'],
 
