@@ -309,11 +309,12 @@
 <div id="toast"></div>
 
 <!-- 預約資料與排程設定抽到共用檔（公開、無姓名）；本機後台 admin.html 也讀同一份 -->
-<script src="config.js?v=63"></script>
+<script src="config.js?v=64"></script>
 <script src="schedule-core.js?v=2"></script><!-- 共用排程邏輯（clinicForDate 等），與 admin/Yanice 共用 -->
 <script>
 /* 設定請改 config.js（以下為渲染邏輯，免改） */
-const WHO_TOKEN = new URLSearchParams(location.search).get('who')||'';
+const WHO_TOKEN = (function(){ const t = new URLSearchParams(location.search).get('who')||'';
+  return (CONFIG.disabledWho||[]).includes(t) ? '' : t; })();   // 停用名單中的連結降級為公用頁
 /* ymd／WD_NAMES／clinicForDate／earlyTimeFor／isBooked 移至共用 schedule-core.js */
 
 function isMine(iso,key,wd){
