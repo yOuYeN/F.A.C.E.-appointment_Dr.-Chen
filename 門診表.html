@@ -156,8 +156,12 @@
     .loc{font-size:14.5px;}
     .seg-head .m{font-size:19px;}
     .clinics{grid-template-columns:1fr;}
-    .cal-grid{min-width:620px;}
-    .sess{font-size:12px;} .sess .rpt{font-size:12px;}
+    /* 月曆：七欄等寬（不讓不換行的報到字撐爆單欄）、報到字改可換行、格高回歸自然 */
+    .cal-grid{min-width:546px; grid-template-columns:repeat(7,1fr);}
+    .sess{font-size:11.5px; padding:2px 4px;}
+    .sess .rpt{font-size:11.5px; white-space:normal; line-height:1.4;}
+    .cal-day{min-height:60px; padding:3px 4px 5px;}
+    .cal-day .dnum{font-size:12px;}
   }
   /* 平板 / 手機橫向（601–920px）：縮月曆字＋加底部留白，避免報到字擠到被遮 */
   @media(min-width:601px) and (max-width:920px){
@@ -459,6 +463,7 @@
 
   // 同一週每天的早/午/晚對齊：同槽取該週最高，空槽也撐同高（月曆頁顯示中才量得到高度）
   function alignBands(){
+    const narrow = window.innerWidth < 600;   // 手機：不等高（等高會把空格撐出大片留白），只清掉舊值
     document.querySelectorAll('.cal-grid').forEach(grid=>{
       const days=[...grid.querySelectorAll('.cal-day')];
       for(let i=0;i<days.length;i+=7){
@@ -466,6 +471,7 @@
         ['早診','午診','晚診'].forEach(b=>{
           const slots=week.map(c=>c.querySelector('.bslot[data-b="'+b+'"]')).filter(Boolean);
           slots.forEach(el=>{ el.style.minHeight=''; });
+          if(narrow) return;
           const h=Math.max(0,...slots.map(el=>el.getBoundingClientRect().height));   // 小數高度，避免整數捨入差 1px
           slots.forEach(el=>{ el.style.minHeight=h+'px'; });
         });
