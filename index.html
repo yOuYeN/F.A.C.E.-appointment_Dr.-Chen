@@ -309,7 +309,7 @@
 <div id="toast"></div>
 
 <!-- 預約資料與排程設定抽到共用檔（公開、無姓名）；本機後台 admin.html 也讀同一份 -->
-<script src="config.js?v=64"></script>
+<script src="config.js?v=65"></script>
 <script src="schedule-core.js?v=2"></script><!-- 共用排程邏輯（clinicForDate 等），與 admin/Yanice 共用 -->
 <script>
 /* 設定請改 config.js（以下為渲染邏輯，免改） */
@@ -469,7 +469,7 @@ function loadHistoryThenRender(){
   const el = document.getElementById('historyContent');
   el.innerHTML = '<div class="hist-empty">載入中…</div>';
   const s = document.createElement('script');
-  s.src = 'history-public.js?v=37';
+  s.src = 'history-public.js?v=38';
   s.onload = ()=>{ _histLoaded = true; renderHistory(); };
   s.onerror = ()=>{ el.innerHTML = '<div class="hist-empty">歷程載入失敗，請稍後再試。</div>'; };
   document.head.appendChild(s);
@@ -548,6 +548,15 @@ function renderHistory(){
       txt = '第 '+(n+1)+' 次麗珠蘭　建議施作時間　<b>'+opts.map(fmt).join(' or ')+'</b>';
     }
     html += '<div class="rj-next"><span class="fl">✦</span>'+txt+'</div>';
+  }
+  // 下次美顏針建議日（config.nextSuggest；過期日期自動消失、已約下次自動收起）
+  {
+    const nsFmt = d=> d.getFullYear()+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0');
+    const nsToday = new Date(); nsToday.setHours(0,0,0,0);
+    const nsDates = ((CONFIG.nextSuggest||{})[WHO_TOKEN]||[]).map(x=>new Date(x+'T00:00:00')).filter(d=>d>nsToday);
+    if(nsDates.length && !fut.length){
+      html += '<div class="rj-next"><span class="fl">✦</span>下次美顏針　建議預約時間　<b>'+nsDates.map(nsFmt).join(' or ')+'</b></div>';
+    }
   }
   // 未來預約
   if(fut.length){
