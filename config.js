@@ -36,7 +36,7 @@ const CONFIG = {
   rejuranSuggestPin: { LMY: '2026-09-27' },
 
   // ★ 下次美顏針建議日（歷程頁顯示「建議預約時間」；過期日期自動消失、該患者約好下次後自動收起）
-  nextSuggest: { LYX: ['2026-09-20', '2026-09-27'], LYF: ['2026-09-20', '2026-09-27'] },
+  nextSuggest: { LYX: ['2026-09-20'], LYF: ['2026-09-20'] },
 
   // ★ 週六早上「待定」月份（顯示灰底不開放，等月初公告後再補入 saturdayMorningDates）
   saturdayMorningPendingMonths: ['2026-10'],
