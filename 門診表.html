@@ -37,7 +37,7 @@
   .legend{display:flex; gap:18px; justify-content:center; flex-wrap:wrap;
           margin:0 0 16px; font-size:15.5px; color:#4A4540; font-weight:600;}
   .legend .dot{display:inline-block; width:15px; height:15px; border-radius:4px; vertical-align:-2px; margin-right:6px;}
-  .legend .dot.gs{background:var(--sage);} .legend .dot.lk{background:var(--clay);}
+  .legend .dot.gs{background:var(--sage);} .legend .dot.lk{background:var(--clay);} .legend .dot.rt{background:var(--gold);}
 
   .notice{display:flex; align-items:center; gap:10px; width:fit-content; max-width:620px; margin:0 auto 26px;
           background:var(--card); border:1px solid var(--line); border-radius:12px;
@@ -90,13 +90,6 @@
 
   footer{text-align:center; color:var(--muted); font-size:13.5px; margin-top:30px;}
 
-  /* 雙頁切換 */
-  .toggle{display:flex; gap:8px; justify-content:center; margin:0 0 24px;}
-  .tbtn{border:1px solid var(--line); background:var(--card); color:var(--ink);
-        font:inherit; font-weight:600; font-size:16px; padding:9px 26px; border-radius:999px;
-        cursor:pointer; transition:background .15s, color .15s; letter-spacing:1px;}
-  .tbtn.active{background:var(--head); color:#fff; border-color:var(--head);}
-  .hidden{display:none;}
 
   /* 月份 / 院區 快速跳轉 */
   .jump{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:0 0 24px;}
@@ -135,9 +128,6 @@
                  width:1.55em; height:1.55em; background:transparent; color:#111; font-weight:800;
                  border:1.5px solid #111; border-radius:4px; margin:0 3px; font-size:.92em;
                  vertical-align:middle; position:relative; top:-.08em;}
-  .p2legend{display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin:0 0 18px; font-size:15px; color:#5a534c;}
-  .p2legend .dot{display:inline-block; width:14px; height:14px; border-radius:4px; vertical-align:-1px; margin-right:6px;}
-  .p2legend .dot.gs{background:var(--sage);} .p2legend .dot.lk{background:var(--clay);} .p2legend .dot.rt{background:var(--gold);}
   .p2note{margin:0 auto 24px; background:var(--card); border:1px solid var(--line);
           border-radius:12px; padding:14px 20px; font-size:14.5px; color:#5a534c; line-height:1.75;}
   .p2note b{color:var(--head-d);}
@@ -177,17 +167,14 @@
   <header class="top">
     <div class="clinic">聯生中醫診所</div>
     <h1>陳由晏 醫師 · 門診時間表</h1>
+    <p class="sub">2026 年 9 – 11 月</p>
   </header>
 
-  <div class="toggle">
-    <button id="btn1" class="tbtn active" onclick="showPage(1)">每週時間表</button>
-    <button id="btn2" class="tbtn" onclick="showPage(2)">當月月曆</button>
-  </div>
-
   <nav class="jump">
-    <a onclick="goJump('8')">8 月</a>
+    <a onclick="goJump('overview')">總覽</a>
     <a onclick="goJump('9')">9 月</a>
     <a onclick="goJump('10')">10 月</a>
+    <a onclick="goJump('11')">11 月</a>
     <a onclick="goJump('clinics')">院區資訊</a>
   </nav>
 
@@ -196,40 +183,17 @@
   <div class="legend">
     <span><span class="dot gs"></span>龜山院區</span>
     <span><span class="dot lk"></span>林口院區</span>
+    <span><span class="dot rt"></span>代診</span>
   </div>
 
   <div class="notice">
     <span class="ic">📢</span>
-    <span><b>週六早診採輪診制</b> (午診、晚診固定開診)，早診開診日期於前一個月月初公告。若下方顯示「<b>本月週六開診日：依公告</b>」，敬請耐心等候更新。</span>
+    <span><b>週六早診採輪診制</b> (午診、夜診固定開診)，早診開診日期於前一個月月初公告。<span id="satPendingNote">若下方顯示「<b>本月週六開診日：依公告</b>」，敬請耐心等候更新。</span></span>
   </div>
-
-  <!-- 八月 -->
-  <section class="seg" id="p1m8">
-    <div class="seg-head"><span class="m">2026 年 8 月</span><span class="tag">現行時段</span></div>
-    <table>
-      <thead><tr>
-        <th class="corner"></th><th>日</th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th>
-      </tr></thead>
-      <tbody>
-        <tr><th>早診<span class="t">09:00 – 12:00</span></th>
-          <td class="lk"><span class="loc lk">林口</span></td><td class="none">—</td><td class="none">—</td><td class="none">—</td><td class="none">—</td>
-          <td class="gs"><span class="loc gs">龜山</span></td><td class="gs sat"><span class="loc gs">龜山</span><span class="satbadge">輪診</span></td></tr>
-        <tr><th>午診<span class="t">14:00 – 17:00</span></th>
-          <td class="lk"><span class="loc lk">林口</span></td><td class="gs"><span class="loc gs">龜山</span></td><td class="none">—</td><td class="none">—</td><td class="none">—</td>
-          <td class="none">—</td><td class="gs"><span class="loc gs">龜山</span></td></tr>
-        <tr><th>晚診<span class="t">17:30 – 20:00</span></th>
-          <td class="none">—</td><td class="none">—</td><td class="none">—</td><td class="none">—</td>
-          <td class="gs"><span class="loc gs">龜山</span></td><td class="none">—</td><td class="gs"><span class="loc gs">龜山</span></td></tr>
-      </tbody>
-    </table>
-    <div class="seg-foot">
-      <span><b>本月週六開診日</b>：8/1、8/15、8/29</span>
-    </div>
-  </section>
 
   <!-- 九月 -->
   <section class="seg" id="p1m9">
-    <div class="seg-head"><span class="m">2026 年 9 月</span><span class="tag">週五新增林口下午診</span></div>
+    <div class="seg-head"><span class="m">2026 年 9 – 11 月</span><span class="tag">總覽</span><span class="tag">週五新增林口下午診</span></div>
     <table>
       <thead><tr>
         <th class="corner"></th><th>日</th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th>
@@ -241,51 +205,24 @@
         <tr><th>午診<span class="t">14:00 – 17:00</span></th>
           <td class="lk"><span class="loc lk">林口</span></td><td class="gs"><span class="loc gs">龜山</span></td><td class="none">—</td><td class="none">—</td><td class="none">—</td>
           <td class="lk"><span class="loc lk">林口</span></td><td class="gs"><span class="loc gs">龜山</span></td></tr>
-        <tr><th>晚診<span class="t">17:30 – 20:00</span></th>
+        <tr><th>夜診<span class="t">17:30 – 20:00</span></th>
           <td class="none">—</td><td class="none">—</td><td class="none">—</td><td class="none">—</td>
           <td class="gs"><span class="loc gs">龜山</span></td><td class="none">—</td><td class="gs"><span class="loc gs">龜山</span></td></tr>
       </tbody>
     </table>
     <div class="seg-foot">
-      <span><b>本月週六開診日</b>：9/12、9/26</span>
-    </div>
-  </section>
-
-  <!-- 十月 -->
-  <section class="seg" id="p1m10">
-    <div class="seg-head"><span class="m">2026 年 10 月</span></div>
-    <table>
-      <thead><tr>
-        <th class="corner"></th><th>日</th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th>
-      </tr></thead>
-      <tbody>
-        <tr><th>早診<span class="t">09:00 – 12:00</span></th>
-          <td class="lk"><span class="loc lk">林口</span></td><td class="none">—</td><td class="none">—</td><td class="none">—</td><td class="none">—</td>
-          <td class="gs"><span class="loc gs">龜山</span></td><td class="gs sat"><span class="loc gs">龜山</span><span class="satbadge">輪診</span></td></tr>
-        <tr><th>午診<span class="t">14:00 – 17:00</span></th>
-          <td class="lk"><span class="loc lk">林口</span></td><td class="gs"><span class="loc gs">龜山</span></td><td class="none">—</td><td class="none">—</td><td class="none">—</td>
-          <td class="lk"><span class="loc lk">林口</span></td><td class="gs"><span class="loc gs">龜山</span></td></tr>
-        <tr><th>晚診<span class="t">17:30 – 20:00</span></th>
-          <td class="none">—</td><td class="none">—</td><td class="none">—</td><td class="none">—</td>
-          <td class="gs"><span class="loc gs">龜山</span></td><td class="none">—</td><td class="gs"><span class="loc gs">龜山</span></td></tr>
-      </tbody>
-    </table>
-    <div class="seg-foot">
-      <span><b>本月週六開診日</b>：依公告</span>
+      <span><b>9 月週六開診日</b>：9/12、9/26</span>
+      <span><b>10 月週六開診日</b>：依公告</span>
+      <span><b>11 月週六開診日</b>：依公告</span>
     </div>
   </section>
 
   </div><!-- /page1 -->
 
-  <div id="page2" class="hidden">
-    <div class="p2legend">
-      <span><span class="dot gs"></span>龜山院區</span>
-      <span><span class="dot lk"></span>林口院區</span>
-      <span><span class="dot rt"></span>代診</span>
-    </div>
+  <div id="page2">
     <div class="p2note">
       <b>看診報到提醒</b>：標示「請○○後／前報到」的時段，表示該診已有美顏針預約，依預約人數安排，<b>會自動與線上預約同步更新</b>。<br>
-      早 = 早診 (09:00–12:00)、午 = 午診 (14:00–17:00)、晚 = 夜診 (17:30–20:00)；<b>代</b> = 代診 (該時段不提供美顏針)。
+      早 = 早診 (09:00–12:00)、午 = 午診 (14:00–17:00)、夜 = 夜診 (17:30–20:00)；<b>代</b> = 代診 (該時段不提供美顏針)。
     </div>
     <div id="cal"></div>
   </div>
@@ -311,7 +248,7 @@
 </div>
 
 <!-- 讀美顏針預約共用設定（同一份 config.js → 報到時間自動同步） -->
-<script src="config.js?v=66"></script>
+<script src="config.js?v=67"></script>
 <script>
   // 七月代診（龜山，不提供美顏針）。診別：早/午/晚
   const LOCUM = {
@@ -326,17 +263,9 @@
   function goJump(t){
     let el;
     if(t==='clinics'){ el=document.getElementById('clinics'); }
-    else { const p = document.getElementById('page2').classList.contains('hidden') ? 'p1' : 'p2'; el=document.getElementById(p+'m'+t); }
+    else if(t==='overview'){ el=document.getElementById('p1m9'); }
+    else { el=document.getElementById('p2m'+t); }
     if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
-  }
-
-  function showPage(n){
-    document.getElementById('page1').classList.toggle('hidden', n!==1);
-    document.getElementById('page2').classList.toggle('hidden', n!==2);
-    document.getElementById('btn1').classList.toggle('active', n===1);
-    document.getElementById('btn2').classList.toggle('active', n===2);
-    if(n===2 && typeof alignBands==='function') alignBands();   // 月曆頁顯示後才量得到高度
-    window.scrollTo(0,0);
   }
 
   function ymd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
@@ -351,12 +280,12 @@
     const satExtra = iso >= (CFG.saturdayExtraDate||'9999');
     const out=[];
     if(wd===1) out.push({band:'午診',loc:'龜山'});
-    else if(wd===4) out.push({band:'晚診',loc:'龜山'});
+    else if(wd===4) out.push({band:'夜診',loc:'龜山'});
     else if(wd===5){ out.push({band:'早診',loc:'龜山'}); if(friPm) out.push({band:'午診',loc:'林口'}); }
     else if(wd===0){ out.push({band:'早診',loc:'林口'}); out.push({band:'午診',loc:'林口'}); }
     else if(wd===6){
       if((CFG.saturdayMorningDates||[]).includes(iso)) out.push({band:'早診',loc:'龜山'});
-      if(satExtra){ out.push({band:'午診',loc:'龜山'}); out.push({band:'晚診',loc:'龜山'}); }
+      if(satExtra){ out.push({band:'午診',loc:'龜山'}); out.push({band:'夜診',loc:'龜山'}); }
     }
     return out;
   }
@@ -406,7 +335,7 @@
                            : hasRejuran ? '請 15:30 後報到'
                            : (people===1 && sm['13:30']) ? '請 14:15 後報到'   // 提早到 13:30 起診的單人（如 9/19）→14:15 後（2026-08-22 user 拍板改定）
                            : people===1 ? '請 15:10 後報到' : '請 14:50 後報到';
-    // 晚診：17:15＋19:00 兩診→健保於 18:10-18:45 間報到（2026-08-20 user 拍板）；
+    // 夜診：17:15＋19:00 兩診→健保於 18:10-18:45 間報到（2026-08-20 user 拍板）；
     //       只有 19:00 一診（17:15 空）→18:45 前（2026-08-22 拍板，上半場開放、只護 19:00 後施作）；單 17:15→18:20 後
     if(sm['19:00']) return sm['17:15'] ? '請於 18:10-18:45 間報到' : '請 18:45 前報到';
     return '請 18:20 後報到';
@@ -417,8 +346,8 @@
     if((CFG.daysOff||[]).includes(iso)) return {off:true, list:[]};
     const map={};
     regularSessions(d).forEach(s=>{ map[s.band]={loc:s.loc, locum:false, note:reportNote(iso,s.band,d)}; });
-    (LOCUM[iso]||[]).forEach(code=>{ const band=code==='早'?'早診':code==='午'?'午診':'晚診'; if(!map[band]) map[band]={loc:'龜山', locum:true, note:''}; });
-    const order=['早診','午診','晚診'];
+    (LOCUM[iso]||[]).forEach(code=>{ const band=code==='早'?'早診':code==='午'?'午診':'夜診'; if(!map[band]) map[band]={loc:'龜山', locum:true, note:''}; });
+    const order=['早診','午診','夜診'];
     return {off:false, list: order.filter(b=>map[b]).map(b=>Object.assign({band:b},map[b]))};
   }
 
@@ -431,7 +360,7 @@
     if(!info.list.length) return '<div class="cal-day'+extra+'">'+inner+'</div>';
     // 每格固定三個槽（早/午/晚；沒診留空槽），渲染後 alignBands() 把同一週同槽高度拉齊
     const byBand={}; info.list.forEach(s=>{ byBand[s.band]=s; });
-    ['早診','午診','晚診'].forEach(b=>{
+    ['早診','午診','夜診'].forEach(b=>{
       const s=byBand[b];
       inner += '<div class="bslot" data-b="'+b+'">';
       if(s){
@@ -449,17 +378,20 @@
     const first=new Date(y,m,1);
     const ndays=new Date(y,m+1,0).getDate();
     const lead=first.getDay(); // 週日為首
-    const tags={7:'現行時段',8:'週五新增林口下午診'};
+    const tags={8:'週五新增林口下午診'};
     let g='<div class="cal-grid">';
     ['日','一','二','三','四','五','六'].forEach(w=> g+='<div class="cal-wd">'+w+'</div>');
     for(let i=0;i<lead;i++) g+='<div class="cal-day pad"></div>';
     for(let dd=1;dd<=ndays;dd++) g+=dayCell(new Date(y,m,dd));
     g+='</div>';
+    const mm=String(m+1).padStart(2,'0');
+    const satDates=(CFG.saturdayMorningDates||[]).filter(x=>x.startsWith(y+'-'+mm)).map(x=>(m+1)+'/'+Number(x.slice(8)));
+    const satFoot='<div class="seg-foot"><span><b>本月週六開診日</b>：'+(satDates.length?satDates.join('、'):'依公告')+'</span></div>';
     return '<div class="cal-month" id="p2m'+(m+1)+'"><div class="cal-mhead">'+y+' 年 '+(m+1)+' 月'
-         + (tags[m]?'<span class="tag">'+tags[m]+'</span>':'') + '</div><div class="scroll">'+g+'</div></div>';
+         + (tags[m]?'<span class="tag">'+tags[m]+'</span>':'') + '</div><div class="scroll">'+g+'</div>'+satFoot+'</div>';
   }
 
-  document.getElementById('cal').innerHTML = buildMonth(2026,7)+buildMonth(2026,8)+buildMonth(2026,9);
+  document.getElementById('cal').innerHTML = buildMonth(2026,8)+buildMonth(2026,9)+buildMonth(2026,10);
 
   // 同一週每天的早/午/晚對齊：同槽取該週最高，空槽也撐同高（月曆頁顯示中才量得到高度）
   function alignBands(){
@@ -468,7 +400,7 @@
       const days=[...grid.querySelectorAll('.cal-day')];
       for(let i=0;i<days.length;i+=7){
         const week=days.slice(i,i+7);
-        ['早診','午診','晚診'].forEach(b=>{
+        ['早診','午診','夜診'].forEach(b=>{
           const slots=week.map(c=>c.querySelector('.bslot[data-b="'+b+'"]')).filter(Boolean);
           slots.forEach(el=>{ el.style.minHeight=''; });
           if(narrow) return;
@@ -479,7 +411,12 @@
     });
   }
   window.addEventListener('resize', alignBands);
-  if(location.hash==='#p2') showPage(2);
+  alignBands();
+  // 本月（總覽月）週六開診日已公佈 → 收起「敬請耐心等候更新」提示
+  (function(){
+    const el=document.getElementById('satPendingNote');
+    if(el && (CFG.saturdayMorningDates||[]).some(x=>x.startsWith('2026-09'))) el.style.display='none';
+  })();
 </script>
 </body>
 </html>
