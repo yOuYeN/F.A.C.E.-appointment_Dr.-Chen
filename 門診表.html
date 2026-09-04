@@ -122,6 +122,8 @@
   .sess.gs{background:var(--sage-bg); color:#4f6049;}
   .sess.lk{background:var(--clay-bg); color:#7a4f44;}
   .sess .b{font-weight:700; margin-right:3px;}
+  .sess.off{background:#F0EDE8; color:var(--muted);}
+  .sess.off .b{color:var(--muted);}
   .sess .lcm{background:var(--gold); color:#fff; border-radius:3px; padding:0 5px; font-size:11px; margin-left:4px; vertical-align:1px;}
   .sess .rpt{display:block; color:#111; font-weight:700; font-size:13px; margin-top:2px; white-space:nowrap;}
   .sess .rpt .ba{display:inline-flex; align-items:center; justify-content:center;
@@ -214,6 +216,7 @@
       <span><b>9 月週六開診日</b>：9/12、9/26</span>
       <span><b>10 月週六開診日</b>：10/10、10/24</span>
       <span><b>11 月週六開診日</b>：依公告</span>
+      <span id="sessOffNote"></span>
     </div>
   </section>
 
@@ -248,7 +251,7 @@
 </div>
 
 <!-- 讀美顏針預約共用設定（同一份 config.js → 報到時間自動同步） -->
-<script src="config.js?v=68"></script>
+<script src="config.js?v=69"></script>
 <script>
   // 七月代診（龜山，不提供美顏針）。診別：早/午/晚
   const LOCUM = {
@@ -345,7 +348,12 @@
     const iso=ymd(d);
     if((CFG.daysOff||[]).includes(iso)) return {off:true, list:[]};
     const map={};
-    regularSessions(d).forEach(s=>{ map[s.band]={loc:s.loc, locum:false, note:reportNote(iso,s.band,d)}; });
+    const offBands=(CFG.sessionsOff||{})[iso]||[];   // 半天停診（整天停診走 daysOff）
+    regularSessions(d).forEach(s=>{
+      map[s.band] = offBands.includes(s.band[0])
+        ? {loc:s.loc, locum:false, note:'', closed:true}
+        : {loc:s.loc, locum:false, note:reportNote(iso,s.band,d)};
+    });
     (LOCUM[iso]||[]).forEach(code=>{ const band=code==='早'?'早診':code==='午'?'午診':'夜診'; if(!map[band]) map[band]={loc:'龜山', locum:true, note:''}; });
     const order=['早診','午診','夜診'];
     return {off:false, list: order.filter(b=>map[b]).map(b=>Object.assign({band:b},map[b]))};
@@ -363,7 +371,9 @@
     ['早診','午診','夜診'].forEach(b=>{
       const s=byBand[b];
       inner += '<div class="bslot" data-b="'+b+'">';
-      if(s){
+      if(s && s.closed){
+        inner += '<div class="sess off"><span class="b">'+s.band[0]+'</span>停診</div>';
+      } else if(s){
         const cls = s.loc==='林口' ? 'lk' : 'gs';
         inner += '<div class="sess '+cls+'"><span class="b">'+s.band[0]+'</span>'+s.loc
               + (s.locum ? ' <span class="lcm">代</span>' : '')
@@ -412,6 +422,18 @@
   }
   window.addEventListener('resize', alignBands);
   alignBands();
+  // 總覽 foot「臨時停診」：由 CFG.sessionsOff 自動列出（只列今天含之後，過期自動消失）
+  (function(){
+    const el=document.getElementById('sessOffNote'); if(!el) return;
+    const BN={'早':'早診','午':'午診','夜':'夜診'}, todayIso=ymd(new Date());
+    const items=Object.keys(CFG.sessionsOff||{}).filter(x=>x>=todayIso).sort().map(x=>{
+      const d=new Date(x+'T00:00:00');
+      return (d.getMonth()+1)+'/'+d.getDate()+' ('+['日','一','二','三','四','五','六'][d.getDay()]+') '
+           + (CFG.sessionsOff[x]||[]).map(b=>BN[b]||b).join('、');
+    });
+    if(items.length) el.innerHTML='<b>臨時停診</b>：'+items.join('；');
+  })();
+
   // 本月（總覽月）週六開診日已公佈 → 收起「敬請耐心等候更新」提示
   (function(){
     const el=document.getElementById('satPendingNote');

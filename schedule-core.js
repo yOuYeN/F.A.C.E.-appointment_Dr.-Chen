@@ -20,6 +20,9 @@ function sundayFixedActive(iso){
   return true;
 }
 
+// 時段代碼 → 診次（早/午/夜）；切點與門診表.html bandSlots 白名單一致（早<12:00、午<17:00、其餘夜）
+function bandOfSlot(key){ return key < '12:00' ? '早' : (key < '17:00' ? '午' : '夜'); }
+
 // 回傳某日門診：{loc, slots:[{key,label,copy,pending?}]} 或 null（無診），不含休假判斷
 function clinicForDate(d){
   const wd = d.getDay();           // 0=日 .. 6=六
@@ -56,6 +59,9 @@ function clinicForDate(d){
   }
   const closed = CONFIG.closedSlots || [];
   slots = slots.filter(s=> !closed.includes(iso+'|'+s.key));
+  // 半天停診：CONFIG.sessionsOff 列出的診次，該診次底下的時段全部不開
+  const offBands = (CONFIG.sessionsOff || {})[iso] || [];
+  if(offBands.length) slots = slots.filter(s=> !offBands.includes(bandOfSlot(s.key)));
   return {loc, slots};
 }
 
