@@ -41,7 +41,7 @@ const CONFIG = {
   rejuranHabitWeekday: { XMR: 5 },
 
   // ★ 麗珠蘭建議日「只顯示指定單一日期」覆寫（演算法給多個候選日、想只留一個時用；日期過了自動失效回演算法）
-  rejuranSuggestPin: { LMY: '2026-09-27' },
+  rejuranSuggestPin: {},
 
   // ★ 下次美顏針建議日（歷程頁顯示「建議施作時間」，與麗珠蘭那三條同一遣詞；過期日期自動消失、該患者約好下次後自動收起）
   nextSuggest: { LYX: ['2026-09-20'], LYF: ['2026-09-20'] },
@@ -66,6 +66,7 @@ const CONFIG = {
     { date:'2026-09-19', slot:'13:30', who:'DFRs8m8' },
     { date:'2026-09-26', slot:'19:00', who:'YJYqg8h' },
     { date:'2026-10-02', slot:'09:00', who:'LXYx3tW' },
+    { date:'2026-10-04', slot:'13:55', who:'LMY', rejuran:true },
     { date:'2026-11-15', slot:'13:55', who:'LSS' },
   ],
 
