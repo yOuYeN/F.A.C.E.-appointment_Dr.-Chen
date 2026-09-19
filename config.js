@@ -64,6 +64,7 @@ const CONFIG = {
     { date:'2026-09-13', slot:'13:55', who:'LSS', rejuran:true },
     { date:'2026-09-13', slot:'15:40', who:'LMY' },
     { date:'2026-09-19', slot:'13:30', who:'DFRs8m8' },
+    { date:'2026-09-26', slot:'09:00', who:'DFRs8m8' },
     { date:'2026-09-26', slot:'19:00', who:'YJYqg8h' },
     { date:'2026-10-02', slot:'09:00', who:'LXYx3tW' },
     { date:'2026-10-04', slot:'13:55', who:'LMY', rejuran:true },
