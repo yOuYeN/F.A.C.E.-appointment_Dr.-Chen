@@ -47,42 +47,27 @@ const CONFIG = {
   nextSuggest: { LYX: ['2026-09-20'], LYF: ['2026-09-20'] },
 
   // ★ 週六早上「待定」月份（顯示灰底不開放，等月初公告後再補入 saturdayMorningDates）
-  saturdayMorningPendingMonths: ['2026-11'],
+  saturdayMorningPendingMonths: ['2026-11', '2026-12'],
 
   // ★ 關閉指定日期的某個時段（該格完全不顯示，含週日固定 11:00）：'YYYY-MM-DD|時段代碼'
   //   ★ 週日早上 09:00 若已約滿 2 位 → 關掉 11:00、下一個時段留 11:30（施作時間才夠）
-  closedSlots: ['2026-09-06|11:00', '2026-09-06|13:55', '2026-09-19|13:55'],
+  closedSlots: [],
 
   // ★ 已預約時段：date=YYYY-MM-DD，slot=該日時段代碼，note 可留空（note 為公開、勿寫真實姓名）
   //   時段代碼：'09:00'(週五早上/週六早上) '13:55'(下午) '17:15'(晚上)
   //            '11:00'(週日早上) '13:55'(週日下午)
   bookings: [
-    { date:'2026-09-04', slot:'09:00', who:'LXYx3tW' },
-    { date:'2026-09-05', slot:'19:00', who:'YJYqg8h' },
-    { date:'2026-09-06', slot:'11:30', who:'LYH' },
-    { date:'2026-09-06', slot:'13:30', who:'QMY' },
-    { date:'2026-09-13', slot:'13:55', who:'LSS', rejuran:true },
-    { date:'2026-09-13', slot:'15:40', who:'LMY' },
-    { date:'2026-09-19', slot:'13:30', who:'DFRs8m8' },
-    { date:'2026-09-20', slot:'13:55', who:'XMR' },
-    { date:'2026-09-26', slot:'09:00', who:'DFRs8m8' },
-    { date:'2026-09-26', slot:'19:00', who:'YJYqg8h' },
     { date:'2026-10-02', slot:'09:00', who:'LXYx3tW' },
     { date:'2026-10-02', slot:'13:55', who:'XMR' },
     { date:'2026-10-04', slot:'13:55', who:'LMY', rejuran:true },
     { date:'2026-10-10', slot:'19:00', who:'YJYqg8h' },
+    { date:'2026-10-11', slot:'13:55', who:'LYH' },
     { date:'2026-10-31', slot:'13:55', who:'DFRs8m8' },
     { date:'2026-11-15', slot:'13:55', who:'LSS' },
   ],
 
   // ★ 特例加開時段（排班表沒有、單獨某日加開一格）：date, slot(時段代碼), label(格內顯示), copy(LINE 訊息用)
   extraSlots: [
-    { date:'2026-09-06', slot:'13:30', label:'13:30', copy:'下午 13:30' },
-    { date:'2026-09-05', slot:'19:00', label:'19:00', copy:'晚上 19:00' },
-    { date:'2026-09-19', slot:'13:30', label:'13:30', copy:'下午 13:30' },
-    { date:'2026-09-13', slot:'15:40', label:'15:40', copy:'下午 15:40' },
-    { date:'2026-09-06', slot:'11:30', label:'11:30', copy:'早上 11:30' },
-    { date:'2026-09-26', slot:'19:00', label:'19:00', copy:'晚上 19:00' },
     { date:'2026-10-10', slot:'19:00', label:'19:00', copy:'晚上 19:00' },
   ],
 
