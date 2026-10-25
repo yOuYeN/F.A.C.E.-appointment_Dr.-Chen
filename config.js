@@ -65,6 +65,8 @@ const CONFIG = {
     { date:'2026-10-17', slot:'19:00', who:'YJYqg8h' },
     { date:'2026-10-25', slot:'11:00', who:'LYH' },
     { date:'2026-10-25', slot:'13:55', who:'ZJFPs4g' },
+    { date:'2026-10-25', slot:'15:10', who:'XMR' },
+    { date:'2026-11-08', slot:'11:00', who:'LYH' },
     { date:'2026-10-31', slot:'13:55', who:'DFRs8m8' },
     { date:'2026-11-07', slot:'09:00', note:'母女綁定 2 位', who:['LBZ','WJY'] },
     { date:'2026-11-15', slot:'13:55', who:'LSS' },
@@ -73,6 +75,7 @@ const CONFIG = {
   // ★ 特例加開時段（排班表沒有、單獨某日加開一格）：date, slot(時段代碼), label(格內顯示), copy(LINE 訊息用)
   extraSlots: [
     { date:'2026-10-17', slot:'19:00', label:'19:00', copy:'晚上 19:00' },
+    { date:'2026-10-25', slot:'15:10', label:'15:10', copy:'下午 15:10' },
   ],
 
   // ★ 個別患者「提早報到」特例（僅該患者「專屬連結 ?who=」與本機後台顯示調整後時間；公用頁與其他人完全不變）
