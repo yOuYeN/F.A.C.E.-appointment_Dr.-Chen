@@ -69,6 +69,7 @@ const CONFIG = {
     { date:'2026-10-26', slot:'13:55', who:'LMY' },
     { date:'2026-10-30', slot:'09:00', who:'LXYx3tW' },
     { date:'2026-11-27', slot:'09:00', who:'LXYx3tW' },
+    { date:'2026-10-30', slot:'16:00', who:'GMFNeqa' },
     { date:'2026-11-08', slot:'11:00', who:'LYH' },
     { date:'2026-10-31', slot:'13:30', who:'DFRs8m8' },
     { date:'2026-11-01', slot:'10:30', who:'QMY' },
@@ -80,6 +81,7 @@ const CONFIG = {
   // ★ 特例加開時段（排班表沒有、單獨某日加開一格）：date, slot(時段代碼), label(格內顯示), copy(LINE 訊息用)
   extraSlots: [
     { date:'2026-10-17', slot:'19:00', label:'19:00', copy:'晚上 19:00' },
+    { date:'2026-10-30', slot:'16:00', label:'16:00', copy:'下午 16:00 (林口)', loc:'林口' },
     { date:'2026-10-31', slot:'13:30', label:'13:30', copy:'下午 13:30' },
     { date:'2026-10-25', slot:'15:10', label:'15:10', copy:'下午 15:10' },
     { date:'2026-11-01', slot:'10:30', label:'10:30', copy:'早上 10:30' },

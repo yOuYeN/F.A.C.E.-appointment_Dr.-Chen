@@ -54,7 +54,7 @@ function clinicForDate(d){
   // 特例加開時段：併入當日並依時間排序
   const extras = CONFIG.extraSlots ? CONFIG.extraSlots.filter(e=>e.date===iso) : [];
   if(extras.length){
-    extras.forEach(e=> slots.push({key:e.slot,label:e.label,copy:e.copy}));
+    extras.forEach(e=> slots.push(e.loc ? {key:e.slot,label:e.label,copy:e.copy,loc:e.loc} : {key:e.slot,label:e.label,copy:e.copy}));   // loc 可覆寫當日院區（如週五午診加開＝林口）
     slots.sort((a,b)=> a.key<b.key ? -1 : (a.key>b.key?1:0));
   }
   const closed = CONFIG.closedSlots || [];
