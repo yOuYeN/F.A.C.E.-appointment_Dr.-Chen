@@ -45,7 +45,7 @@ const CONFIG = {
   rejuranSuggestPin: {},
 
   // ★ 下次美顏針建議日（歷程頁顯示「建議施作時間」，與麗珠蘭那三條同一遣詞；過期日期自動消失、該患者約好下次後自動收起）
-  nextSuggest: { LYX: ['2026-09-20'], LYF: ['2026-09-20'] },
+  nextSuggest: { LYX: ['2026-09-20'], LYF: ['2026-09-20'], QMY: ['2026-11-22', '2026-11-29'] },   // QMY：11/1 第 5 次後建議 3–4 週（週日林口早上習慣）
 
   // ★ 週六早上「待定」月份（顯示灰底不開放，等月初公告後再補入 saturdayMorningDates）
   saturdayMorningPendingMonths: ['2026-12'],
