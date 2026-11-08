@@ -59,8 +59,6 @@ const CONFIG = {
   //            '11:00'(週日早上) '13:55'(週日下午)
   bookings: [
     { date:'2026-11-27', slot:'09:00', who:'LXYx3tW' },
-    { date:'2026-11-08', slot:'11:00', who:'LYH' },
-    { date:'2026-11-08', slot:'13:55', who:'XMR' },
     { date:'2026-11-01', slot:'10:30', who:'QMY' },
     { date:'2026-11-07', slot:'09:00', note:'母女綁定 2 位', who:['LBZ','WJY'] },
     { date:'2026-11-13', slot:'13:55', who:'ZJFPs4g' },
