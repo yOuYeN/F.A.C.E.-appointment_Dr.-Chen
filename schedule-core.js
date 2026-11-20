@@ -42,7 +42,8 @@ function clinicForDate(d){
     loc='龜山';
     const monthStr = iso.substring(0,7);
     if(CONFIG.saturdayMorningDates.includes(iso)){
-      slots.push({key:'09:00',label:'09:00',copy:'09:00'});
+      const satLoc = (CONFIG.saturdayMorningLoc||{})[iso];   // 週六早診院區覆寫（如 12/12 林口）；slot.loc 覆寫當日院區
+      slots.push(satLoc ? {key:'09:00',label:'09:00',copy:'09:00 ('+satLoc+')',loc:satLoc} : {key:'09:00',label:'09:00',copy:'09:00'});
     } else if((CONFIG.saturdayMorningPendingMonths||[]).includes(monthStr)){
       slots.push({key:'09:00',label:'待定',copy:'',pending:true});
     }

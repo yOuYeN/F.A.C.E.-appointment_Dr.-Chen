@@ -214,8 +214,8 @@
     </table>
     <div class="seg-foot">
       <span><b>11 月週六開診日</b>：11/7、11/21</span>
-      <span><b>12 月週六開診日</b>：依公告</span>
-      <span><b>休診</b>：12/12 (六)、12/13 (日)</span>
+      <span><b>12 月週六開診日</b>：12/5、12/12 (林口)、12/19</span>
+      <span><b>休診</b>：12/13 (日)</span>
       <span><b>2027 年 1 月週六開診日</b>：依公告</span>
       <span id="sessOffNote"></span>
     </div>
@@ -252,7 +252,7 @@
 </div>
 
 <!-- 讀美顏針預約共用設定（同一份 config.js → 報到時間自動同步） -->
-<script src="config.js?v=113"></script>
+<script src="config.js?v=114"></script>
 <script>
   // 代診（不提供美顏針）。診別：早/午/晚；院區預設龜山，其他院區寫成 '晚:林口'
   const LOCUM = {
@@ -289,7 +289,7 @@
     else if(wd===5){ out.push({band:'早診',loc:'龜山'}); if(friPm) out.push({band:'午診',loc:'林口'}); }
     else if(wd===0){ out.push({band:'早診',loc:'林口'}); out.push({band:'午診',loc:'林口'}); }
     else if(wd===6){
-      if((CFG.saturdayMorningDates||[]).includes(iso)) out.push({band:'早診',loc:'龜山'});
+      if((CFG.saturdayMorningDates||[]).includes(iso)) out.push({band:'早診',loc:(CFG.saturdayMorningLoc||{})[iso]||'龜山'});   // 週六早診院區覆寫（如 12/12 林口）
       if(satExtra){ out.push({band:'午診',loc:'龜山'}); out.push({band:'夜診',loc:'龜山'}); }
     }
     return out;
@@ -403,7 +403,7 @@
     for(let dd=1;dd<=ndays;dd++) g+=dayCell(new Date(y,m,dd));
     g+='</div>';
     const mm=String(m+1).padStart(2,'0');
-    const satDates=(CFG.saturdayMorningDates||[]).filter(x=>x.startsWith(y+'-'+mm)).map(x=>(m+1)+'/'+Number(x.slice(8)));
+    const satDates=(CFG.saturdayMorningDates||[]).filter(x=>x.startsWith(y+'-'+mm)).map(x=>(m+1)+'/'+Number(x.slice(8))+((CFG.saturdayMorningLoc||{})[x]?' ('+CFG.saturdayMorningLoc[x]+')':''));
     const satFoot='<div class="seg-foot"><span><b>本月週六開診日</b>：'+(satDates.length?satDates.join('、'):'依公告')+'</span></div>';
     return '<div class="cal-month" id="p2m'+(m+1)+'"><div class="cal-mhead">'+y+' 年 '+(m+1)+' 月'
          + (tags[m]?'<span class="tag">'+tags[m]+'</span>':'') + '</div><div class="scroll">'+g+'</div>'+satFoot+'</div>';
