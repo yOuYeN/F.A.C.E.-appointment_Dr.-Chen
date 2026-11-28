@@ -71,6 +71,8 @@ const CONFIG = {
     { date:'2026-12-20', slot:'13:55', who:'LSS' },
     { date:'2026-12-06', slot:'09:15', who:'LXL4hff' },
     { date:'2026-12-05', slot:'09:00', who:'DFRs8m8' },
+    { date:'2026-12-11', slot:'13:55', who:'ZJFPs4g', rejuran:true },
+    { date:'2026-12-18', slot:'09:00', who:'LXYx3tW' },
   ],
 
   // ★ 特例加開時段（排班表沒有、單獨某日加開一格）：date, slot(時段代碼), label(格內顯示), copy(LINE 訊息用)
